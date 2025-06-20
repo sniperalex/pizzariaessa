@@ -5,14 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan; // ADICIONE ESTE IMPORT
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EnableMongoRepositories("com.fatec.pizzaria_mario.repository") // Adicione esta linha
+@EnableMongoRepositories("com.fatec.pizzaria_mario.repository")
+// ADICIONE ESTA ANOTAÇÃO. Ela diz ao Spring para procurar componentes em todo o pacote base.
+@ComponentScan(basePackages = "com.fatec.pizzaria_mario")
 public class PizzariaMarioApplication implements CommandLineRunner {
 
     @Autowired
-    private UsuarioService usuarioService; // Agora injetamos o serviço
+    private UsuarioService usuarioService;
 
     public static void main(String[] args) {
         SpringApplication.run(PizzariaMarioApplication.class, args);
@@ -20,10 +23,7 @@ public class PizzariaMarioApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("--- INICIANDO CRIAÇÃO DE USUÁRIOS PADRÃO ---");
-        // A lógica agora está no serviço, muito mais limpo!
         usuarioService.criarUsuarioAdminPadrao();
         usuarioService.criarUsuarioAtendentePadrao();
-        System.out.println("--- FINALIZADA CRIAÇÃO DE USUÁRIOS PADRÃO ---");
     }
 }
