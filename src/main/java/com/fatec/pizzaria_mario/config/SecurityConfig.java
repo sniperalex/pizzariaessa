@@ -1,75 +1,49 @@
 package com.fatec.pizzaria_mario.config;
 
-import com.fatec.pizzaria_mario.service.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order; // Importe esta classe
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy; // Importe esta classe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher; // Importe esta classe
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
-    // Este provider será usado por ambas as configurações de segurança
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(customUserDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
 
-    // --- CONFIGURAÇÃO #1: Para a API REST (/api/**) ---
     @Bean
-    @Order(1) // Define a prioridade desta configuração
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .securityMatcher(new AntPathRequestMatcher("/api/**")) // Aplica esta regra SOMENTE para URLs que começam com /api/
-            .csrf(csrf -> csrf.disable()) // Desabilita CSRF para a API
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().authenticated() // Qualquer requisição na API precisa de autenticação
+            .csrf(csrf -> csrf.disable()) // Simplifica, mas em produção deve ser estudado
+            .authorizeHttpRequests(authorize -> authorize
+                // Permite que qualquer um acesse a página de login e recursos estáticos
+                .requestMatchers("/login", "/css/**", "/js/**", "/webjars/**").permitAll()
+                // Acesso à API de produtos continua como antes
+                .requestMatchers("/api/**").authenticated() 
+                // Qualquer outra requisição precisa de autenticação
+                .anyRequest().authenticated()
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // API não guarda estado (sessão)
-            .httpBasic(); // Usa autenticação HTTP Basic
-
-        return http.build();
-    }
-
-    // --- CONFIGURAÇÃO #2: Para o resto da aplicação (Form Login) ---
-    @Bean
-    @Order(2)
-    public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/css/**", "/js/**").permitAll() // Libera acesso à página de login e recursos estáticos
-                .anyRequest().authenticated() // O resto precisa de login
-            )
+            // Configuração do Formulário de Login
             .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/home", true)
-                .failureUrl("/login?error=true")
+                .loginPage("/login") // Diz ao Spring qual é a nossa página de login customizada
+                .loginProcessingUrl("/login") // A URL para onde o formulário envia os dados (Spring intercepta)
+                .defaultSuccessUrl("/home", true) // Para onde o usuário é redirecionado após o sucesso
+                .failureUrl("/login?error=true") // Para onde vai se o login falhar
             )
-            .logout(logout -> logout.permitAll());
-
+            .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout=true") // Para onde vai após o logout
+            )
+            // Também habilitamos o HTTP Basic para continuar usando o Postman
+            .httpBasic(); 
+            
         return http.build();
     }
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!-- Adicionamos o namespace do Spring Security -->
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"> 
+<head>
+    <meta charset="UTF-8">
+    <title>Página Inicial</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body class="container mt-4">
+
+    <h1>Bem-vindo à Pizzaria do Mario!</h1>
+    
+    <!-- Seção que só aparece se o usuário ESTIVER autenticado -->
+    <div sec:authorize="isAuthenticated()">
+        <p>
+            Você está logado como: 
+            <!-- Pega o nome do usuário autenticado -->
+            <strong sec:authentication="name">Nome do Usuário</strong>.
+        </p>
+
+        <p>
+            Seus papéis (roles) são: 
+            <!-- Mostra os papéis (roles) do usuário -->
+            <strong sec.authentication="principal.authorities"></strong>
+        </p>
+        
+        <!-- Formulário de Logout -->
+        <form th:action="@{/logout}" method="post" class="mt-3">
+            <button type="submit" class="btn btn-danger">Sair</button>
+        </form>
+    </div>
+
+    <!-- Seção que só aparece se o usuário NÃO ESTIVER autenticado -->
+    <div sec:authorize="isAnonymous()">
+        <p>Você não está logado. <a th:href="@{/login}">Clique aqui para entrar</a>.</p>
+    </div>
+
+</body>
+</html>
