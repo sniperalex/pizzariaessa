@@ -1,20 +1,26 @@
 package com.fatec.pizzaria_mario.controller;
 
-import org.springframework.stereotype.Controller; // <-- Garanta que é este o import
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-// AQUI ESTÁ A ANOTAÇÃO MAIS IMPORTANTE DE TODAS:
-// Deve ser @Controller, e NÃO @RestController.
 @Controller
 public class LoginController {
 
+    // Redireciona da raiz para o login
     @GetMapping("/")
     public String redirectToLogin() {
         return "redirect:/login";
     }
 
+    // Mostra a página de login
     @GetMapping("/login")
     public String loginPage() {
         return "login"; 
+    }
+
+    // MOSTRA A PÁGINA HOME APÓS O LOGIN BEM-SUCEDIDO
+    @GetMapping("/home")
+    public String homePage() {
+        return "home"; // Este método estava faltando
     }
 }

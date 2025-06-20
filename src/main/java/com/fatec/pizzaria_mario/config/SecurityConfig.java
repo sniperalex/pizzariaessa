@@ -1,6 +1,6 @@
 package com.fatec.pizzaria_mario.config;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest; // <-- IMPORT IMPORTANTE
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,22 +17,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(authorize -> authorize
-                // ESTA É A FORMA MAIS SEGURA DE LIBERAR ARQUIVOS ESTÁTICOS
-                // Ela tem prioridade máxima.
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+        return http
+                .csrf(csrf -> csrf.disable()) // Desabilitar CSRF para o formulário
                 
-                // Agora liberamos as rotas de login
-                .requestMatchers("/", "/login").permitAll()
+                .authorizeHttpRequests(authorize -> authorize
+                        // REGRA 1: A forma mais recomendada para liberar recursos estáticos.
+                        // Isso libera /css, /js, /images, etc. automaticamente.
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        
+                        // REGRA 2: Liberar nossas páginas públicas (raiz e a página de login)
+                        .requestMatchers("/", "/login").permitAll()
+                        
+                        // REGRA 3: Qualquer outra requisição (como /home) precisa de autenticação.
+                        .anyRequest().authenticated()
+                )
                 
-                // Qualquer outra requisição precisa de autenticação
-                .anyRequest().authenticated()
-            )
-            // Desabilita CSRF, que não é necessário para a nossa API stateless
-            .csrf(csrf -> csrf.disable());
-
-        return http.build();
+                .formLogin(form -> form
+                        .loginPage("/login")                // Diz ao Spring onde está nossa página de login.
+                        .defaultSuccessUrl("/home", true)  // Após o sucesso, envia para /home.
+                        .permitAll()                        // Permite acesso a todos os processos de login.
+                )
+                .build();
     }
 
     @Bean

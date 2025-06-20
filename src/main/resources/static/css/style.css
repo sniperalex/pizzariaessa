@@ -1,0 +1,19 @@
+body {
+    /* O caminho agora está correto: sai da pasta css (../) e entra na images */
+    background-image: url('../images/background-pizzaria.jpg');
+    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.9); /* Um leve branco translúcido para o card */
+}
