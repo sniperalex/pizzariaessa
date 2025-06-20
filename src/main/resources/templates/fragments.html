@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    
+<!-- FRAGMENTO DO CARRINHO FLUTUANTE -->
+<div th:fragment="carrinho-flutuante">
+    <!-- Só mostra o ícone do carrinho se ele existir e não estiver vazio -->
+    <div th:if="${session.carrinho != null AND !session.carrinho.itens.isEmpty()}" 
+         style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;">
+        
+        <a th:href="@{/carrinho/resumo}" class="btn btn-success rounded-circle p-3 shadow-lg position-relative">
+            <!-- Ícone de Carrinho do Bootstrap Icons -->
+            <i class="bi bi-cart-fill" style="font-size: 1.5rem;"></i>
+            
+            <!-- Badge com o número de itens -->
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${session.carrinho.itens.size()}">
+                
+            </span>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

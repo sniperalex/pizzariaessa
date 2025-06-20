@@ -1,7 +1,6 @@
+/* Estilo para o corpo da página */
 body {
-    /* O caminho agora está correto: sai da pasta css (../) e entra na images */
     background-image: url('../images/background-pizzaria.jpg');
-    
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -11,9 +10,23 @@ body {
     font-family: sans-serif;
 }
 
+/* NOVO ESTILO: O "buffer" para o título */
+.page-title-container {
+    background-color: rgba(0, 0, 0, 0.5); /* Preto com 50% de transparência */
+    color: white; /* Cor do texto dentro do container */
+    padding: 2rem; /* Espaçamento interno */
+    border-radius: 0.5rem; /* Bordas arredondadas */
+    display: inline-block; /* Faz o fundo se ajustar ao conteúdo */
+}
+
+/* Garante que o texto de parágrafo dentro do container também seja branco */
+.page-title-container p {
+    color: white;
+}
+
+/* Estilo padrão para os cards */
 .card {
     border: none;
     border-radius: 1rem;
     box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, 0.9); /* Um leve branco translúcido para o card */
 }

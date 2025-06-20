@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro - Pizzaria Mario</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5 col-xl-4">
+            <div class="card">
+                <div class="card-body p-4">
+
+                    <div class="text-center mb-4">
+                        <h4 class="mt-3">Crie sua Conta</h4>
+                    </div>
+
+                    <form th:action="@{/register}" th:object="${usuario}" method="post">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="login" th:field="*{login}" placeholder="Nome de Usuário" required>
+                            <label for="login">Nome de Usuário</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="senha" th:field="*{senha}" placeholder="Senha" required>
+                            <label for="senha">Senha</label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <p>Já tem uma conta? <a th:href="@{/login}">Faça o login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

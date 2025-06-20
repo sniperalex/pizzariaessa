@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido Confirmado!</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body class="bg-light">
+<div class="container text-center py-5">
+    <div class="py-5">
+        <h1 class="display-1 text-success">✔</h1>
+        <h2 class="display-4">Obrigado!</h2>
+        <p class="lead">Seu pedido foi recebido com sucesso e já está sendo preparado.</p>
+        <hr class="my-4">
+        <p>Em breve você receberá atualizações sobre a entrega.</p>
+        <a class="btn btn-primary btn-lg mt-3" th:href="@{/}" role="button">Voltar à Página Inicial</a>
+    </div>
+</div>
+</body>
+</html>

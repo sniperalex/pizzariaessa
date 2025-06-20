@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Gerenciar Produtos</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="text-end mb-3">
+        <a th:href="@{/home}" class="btn btn-secondary">Voltar para Home</a>
+        <a th:href="@{/logout}" class="btn btn-danger ms-2">Sair</a>
+    </div>
+    <div class="text-center mb-4">
+        <div class="page-title-container">
+            <h1 class="display-5">Painel do Administrador</h1>
+        </div>
+    </div>
+    <hr class="mb-5">
+
+    <!-- FORMULÁRIO ATUALIZADO PARA USAR O DTO -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header">
+            <h3>Cadastrar Novo Produto</h3>
+        </div>
+        <div class="card-body">
+            <!-- MUDANÇA 1: Adicionamos th:object para conectar ao DTO -->
+            <form method="POST" th:action="@{/admin/produtos}" th:object="${produtoDto}" enctype="multipart/form-data">
+                <!-- MUDANÇA 2: Usamos th:field para conectar cada campo -->
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome do Produto</label>
+                    <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">Descrição</label>
+                    <textarea class="form-control" id="descricao" th:field="*{descricao}" rows="3" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="preco" class="form-label">Preço (ex: 39.90)</label>
+                        <input type="number" step="0.01" class="form-control" id="preco" th:field="*{preco}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="categoria" class="form-label">Categoria</label>
+                        <select class="form-select" id="categoria" th:field="*{categoria}" required>
+                            <option value="Pizza" selected>Pizza</option>
+                            <option value="Acompanhamento">Acompanhamento</option>
+                            <option value="Bebida">Bebida</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="imagemFile" class="form-label">Imagem do Produto</label>
+                    <input class="form-control" type="file" id="imagemFile" th:field="*{imagemFile}" accept="image/png, image/jpeg" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- A tabela de produtos existentes continua a mesma -->
+    <div class="card shadow-sm">
+         <div class="card-header"><h3>Produtos Cadastrados</h3></div>
+        <div class="card-body">
+            <table class="table table-striped table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Imagem</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Categoria</th>
+                        <th style="width: 20%;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="produto : ${produtos}">
+                        <td><img th:src="@{/produtos/{id}/imagem(id=${produto.id})}" alt="Imagem" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;"/></td>
+                        <td th:text="${produto.nome}"></td>
+                        <td th:text="|R$ ${{ #numbers.formatDecimal(produto.preco, 1, 'COMMA', 2, 'POINT') }}|"></td>
+                        <td th:text="${produto.categoria}"></td>
+                        <td>
+                            <a th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}" class="btn btn-sm btn-warning">Editar</a>
+                            <form th:action="@{/admin/produtos/{id}/remover(id=${produto.id})}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este produto?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

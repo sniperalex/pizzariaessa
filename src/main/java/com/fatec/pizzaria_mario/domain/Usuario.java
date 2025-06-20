@@ -8,71 +8,68 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// Anotação do Lombok para gerar Getters e Setters automaticamente
 @Getter
 @Setter
-// Anotação do Spring Data MongoDB para mapear esta classe para uma coleção
 @Document(collection = "usuarios")
-public class Usuario implements UserDetails { // Implementa a interface do Spring Security
+public class Usuario implements UserDetails {
 
     @Id
     private String id;
 
-    @Indexed(unique = true) // Garante que não haverá usernames duplicados
-    private String username;
+    // CORREÇÃO 1: Renomeado para "login" para ser consistente com o resto da aplicação
+    @Indexed(unique = true)
+    private String login;
 
-    private String password;
+    // CORREÇÃO 2: Renomeado para "senha"
+    private String senha;
 
-    // Usamos um Set para garantir que os papéis (roles) não se repitam
+    // Manteve-se como Set<String> para flexibilidade
     private Set<String> roles = new HashSet<>();
 
     // --- MÉTODOS OBRIGATÓRIOS DA INTERFACE UserDetails ---
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Transforma nosso Set<String> de papéis em uma coleção que o Spring Security entende
+        // CORREÇÃO 3: Adiciona o prefixo "ROLE_" automaticamente, que é o padrão do Spring Security
         return roles.stream()
-                .map(SimpleGrantedAuthority::new)
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
                 .collect(Collectors.toList());
     }
 
-    // O Spring Security usará este método para pegar a senha
+    // Adaptado para o nome "senha"
     @Override
     public String getPassword() {
-        return this.password;
+        return this.senha;
     }
 
-    // O Spring Security usará este método para pegar o nome de usuário
+    // Adaptado para o nome "login"
     @Override
     public String getUsername() {
-        return this.username;
+        return this.login;
+    }
+    
+    // Método extra para adicionar papéis de forma segura
+    public void addRole(String role) {
+        this.roles.add(role.toUpperCase());
     }
 
-    // Os métodos abaixo podem retornar 'true' por padrão para simplificar
+
+    // Os métodos abaixo continuam retornando 'true' por padrão
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() { return true; }
 }
