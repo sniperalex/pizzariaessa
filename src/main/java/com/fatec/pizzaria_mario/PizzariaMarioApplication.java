@@ -10,11 +10,11 @@ import org.springframework.context.annotation.ComponentScan; // Adicione este im
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-// Diz ao Spring para procurar por @Document/.@Entity em '...domain'
+// Diz ao Spring para procurar por @Entity/@Document neste pacote e subpacotes
 @EntityScan(basePackages = "com.fatec.pizzaria_mario.domain")
-// Diz ao Spring para procurar por @Repository em '...repository'
+// Diz ao Spring para procurar por @Repository neste pacote e subpacotes
 @EnableMongoRepositories(basePackages = "com.fatec.pizzaria_mario.repository")
-// Diz ao Spring para procurar por @Controller, @Service, etc., em todo o projeto base
+// Diz ao Spring para procurar por @Component, @Service, @Controller, etc., neste pacote e subpacotes
 @ComponentScan(basePackages = "com.fatec.pizzaria_mario")
 public class PizzariaMarioApplication implements CommandLineRunner {
 

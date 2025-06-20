@@ -1,8 +1,10 @@
 package com.fatec.pizzaria_mario.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,39 +13,35 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Simplifica, mas em produção deve ser estudado
             .authorizeHttpRequests(authorize -> authorize
-                // Permite que qualquer um acesse a página de login e recursos estáticos
-                .requestMatchers("/login", "/css/**", "/js/**", "/webjars/**").permitAll()
-                // Acesso à API de produtos continua como antes
-                .requestMatchers("/api/**").authenticated() 
+                // ESTA É A FORMA MAIS SEGURA DE LIBERAR ARQUIVOS ESTÁTICOS
+                // Ela tem prioridade máxima.
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                
+                // Agora liberamos as rotas de login
+                .requestMatchers("/", "/login").permitAll()
+                
                 // Qualquer outra requisição precisa de autenticação
                 .anyRequest().authenticated()
             )
-            // Configuração do Formulário de Login
-            .formLogin(form -> form
-                .loginPage("/login") // Diz ao Spring qual é a nossa página de login customizada
-                .loginProcessingUrl("/login") // A URL para onde o formulário envia os dados (Spring intercepta)
-                .defaultSuccessUrl("/home", true) // Para onde o usuário é redirecionado após o sucesso
-                .failureUrl("/login?error=true") // Para onde vai se o login falhar
-            )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/login?logout=true") // Para onde vai após o logout
-            )
-            // Também habilitamos o HTTP Basic para continuar usando o Postman
-            .httpBasic(); 
-            
+            // Desabilita CSRF, que não é necessário para a nossa API stateless
+            .csrf(csrf -> csrf.disable());
+
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
