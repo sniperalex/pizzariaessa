@@ -1,34 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Admin - Gerenciar Produtos</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body class="bg-light">
+
+<div th:replace="~{fragments :: navbar}"></div>
 
 <div class="container py-5">
     <div class="text-end mb-3">
         <a th:href="@{/home}" class="btn btn-secondary">Voltar para Home</a>
         <a th:href="@{/logout}" class="btn btn-danger ms-2">Sair</a>
     </div>
-    <div class="text-center mb-4">
-        <div class="page-title-container">
-            <h1 class="display-5">Painel do Administrador</h1>
-        </div>
-    </div>
-    <hr class="mb-5">
 
-    <!-- FORMULÁRIO ATUALIZADO PARA USAR O DTO -->
     <div class="card shadow-sm mb-5">
         <div class="card-header">
             <h3>Cadastrar Novo Produto</h3>
         </div>
         <div class="card-body">
-            <!-- MUDANÇA 1: Adicionamos th:object para conectar ao DTO -->
             <form method="POST" th:action="@{/admin/produtos}" th:object="${produtoDto}" enctype="multipart/form-data">
-                <!-- MUDANÇA 2: Usamos th:field para conectar cada campo -->
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome do Produto</label>
                     <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
@@ -60,7 +54,6 @@
         </div>
     </div>
     
-    <!-- A tabela de produtos existentes continua a mesma -->
     <div class="card shadow-sm">
          <div class="card-header"><h3>Produtos Cadastrados</h3></div>
         <div class="card-body">
@@ -76,7 +69,7 @@
                 </thead>
                 <tbody>
                     <tr th:each="produto : ${produtos}">
-                        <td><img th:src="@{/produtos/{id}/imagem(id=${produto.id})}" alt="Imagem" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;"/></td>
+                        <td><img th:src="@{/api/produtos/{id}/imagem(id=${produto.id})}" alt="Imagem" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;"/></td>
                         <td th:text="${produto.nome}"></td>
                         <td th:text="|R$ ${{ #numbers.formatDecimal(produto.preco, 1, 'COMMA', 2, 'POINT') }}|"></td>
                         <td th:text="${produto.categoria}"></td>
@@ -92,5 +85,6 @@
         </div>
     </div>
 </div>
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

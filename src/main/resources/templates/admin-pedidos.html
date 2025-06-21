@@ -8,46 +8,70 @@
 </head>
 <body class="bg-light">
 <div th:replace="~{fragments :: navbar}"></div>
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Histórico de Todos os Pedidos</h1>
-        <a th:href="@{/home}" class="btn btn-secondary">Voltar para o Painel</a>
+<div class="container-fluid py-5 px-4">
+    <div class="page-title-container d-inline-block mb-4">
+        <h1 class="mb-0">Histórico de Todos os Pedidos</h1>
     </div>
-    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-    <div th:each="pedido : ${pedidos}" class="card mb-4 shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <strong>Pedido #<span th:text="${#strings.substring(pedido.id, 0, 8)}"></span></strong>
-                <span class="ms-3 text-muted" th:text="'Feito em: ' + ${#temporals.format(pedido.dataHora, 'dd/MM/yyyy HH:mm')}"></span>
-            </div>
-        </div>
+
+    <div class="card mb-4">
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><b>Cliente:</b> <span th:text="${pedido.nomeCliente}"></span></p>
-                    <p><b>Endereço:</b> <span th:text="${pedido.enderecoEntrega}"></span></p>
-                    <p><b>Pagamento:</b> <span class="text-capitalize" th:text="${pedido.formaPagamento}"></span></p>
-                    <h5 class="text-end">Total: <span class="text-success" th:text="|R$ ${{ #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT') }}|"></span></h5>
+            <h5 class="card-title">Filtrar Pedidos</h5>
+            <form th:action="@{/admin/pedidos}" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="cliente" class="form-label">Por Nome do Cliente</label>
+                    <input type="text" id="cliente" name="cliente" class="form-control" placeholder="Digite o nome..." th:value="${clienteFiltro}">
                 </div>
-                <div class="col-md-6">
-                    <h6>Itens:</h6>
-                    <ul><li th:each="item : ${pedido.itens}" th:text="${item.quantidade} + 'x ' + ${item.produto.nome}"></li></ul>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Por Status</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="">Todos</option>
+                        <option th:each="st : ${T(com.fatec.pizzaria_mario.domain.StatusPedido).values()}" th:value="${st}" th:text="${st}" th:selected="${st.name() == statusFiltro}"></option>
+                    </select>
                 </div>
-            </div>
-        </div>
-        <div class="card-footer bg-light">
-            <form th:action="@{/pedidos/alterar-status}" method="post" class="d-flex align-items-center justify-content-end">
-                <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
-                <label for="status" class="form-label me-2 mb-0"><b>Status do Pedido:</b></label>
-                <select name="status" class="form-select w-auto me-2">
-                    <option th:each="st : ${T(com.fatec.pizzaria_mario.domain.StatusPedido).values()}" 
-                            th:value="${st}" 
-                            th:text="${st}"
-                            th:selected="${st == pedido.status}"></option>
-                </select>
-                <button type="submit" class="btn btn-sm btn-info">Atualizar Status</button>
+                <div class="col-md-3">
+                    <label for="data" class="form-label">Por Data</label>
+                    <input type="date" id="data" name="data" class="form-control" th:value="${dataFiltro}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    <a th:href="@{/admin/pedidos}" class="btn btn-link w-100 p-0 mt-1">Limpar Filtros</a>
+                </div>
             </form>
         </div>
+    </div>
+    
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr><th>#ID</th><th>Data/Hora</th><th>Cliente</th><th>Endereço</th><th>Itens</th><th>Total</th><th style="width: 250px;">Alterar Status</th></tr>
+            </thead>
+            <tbody>
+                <tr th:if="${pedidos.isEmpty()}"><td colspan="7" class="text-center p-4">Nenhum pedido encontrado para os filtros selecionados.</td></tr>
+                <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${#strings.substring(pedido.id, 0, 8)}"></td>
+                    <td class="text-nowrap" th:text="${#temporals.format(pedido.dataHora, 'dd/MM/yy HH:mm')}"></td>
+                    <td th:text="${pedido.nomeCliente}"></td>
+                    <td th:text="${pedido.enderecoEntrega}"></td>
+                    <td>
+                        <ul class="list-unstyled mb-0 ps-3">
+                            <li th:each="item : ${pedido.itens}" th:text="${item.quantidade} + 'x ' + ${item.produto.nome}"></li>
+                        </ul>
+                    </td>
+                    <td class="text-nowrap" th:text="|R$ ${{ #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT') }}|"></td>
+                    <td>
+                        <form th:action="@{/pedidos/alterar-status}" method="post" class="d-flex">
+                            <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
+                            <select name="status" class="form-select form-select-sm me-2">
+                                <option th:each="st : ${T(com.fatec.pizzaria_mario.domain.StatusPedido).values()}" th:value="${st}" th:text="${st}" th:selected="${st == pedido.status}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-info">OK</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

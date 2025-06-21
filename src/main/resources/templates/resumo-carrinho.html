@@ -9,13 +9,15 @@
 </head>
 <body class="bg-light">
 
+<div th:replace="~{fragments :: navbar}"></div>
+
 <div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4">Resumo do Pedido</h1>
+    <div class="text-center mb-5 page-title-container d-inline-block">
+        <h1 class="display-4 mb-0">Resumo do Pedido</h1>
         <p class="lead">Confira os itens do seu carrinho antes de continuar.</p>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mt-4">
         <div class="card-body">
             <div th:if="${carrinho.itens.isEmpty()}" class="alert alert-info text-center">
                 Seu carrinho está vazio. <a th:href="@{/cardapio}" class="alert-link">Comece a pedir!</a>
@@ -26,7 +28,7 @@
                     <tr>
                         <th style="width: 50%;">Produto</th>
                         <th class="text-center">Quantidade</th>
-                        <th class="text-end">Preço</th>
+                        <th class="text-end">Subtotal</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -34,26 +36,21 @@
                     <tr th:each="item : ${carrinho.itens}">
                         <td>
                             <div class="d-flex align-items-center">
-                                <img th:src="@{/produtos/{id}/imagem(id=${item.produto.id})}" alt="Imagem" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
+                                <img th:src="@{/api/produtos/{id}/imagem(id=${item.produto.id})}" alt="Imagem" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
                                 <div>
-                                    <h6 class="mb-0" th:text="${item.produto.nome}">Nome do Produto</h6>
-                                    <small class="text-muted" th:text="${item.produto.categoria}">Categoria</small>
+                                    <h6 class="mb-0" th:text="${item.produto.nome}"></h6>
+                                    <small class="text-muted" th:text="${item.produto.categoria}"></small>
                                 </div>
                             </div>
                         </td>
-                        <!-- CONTROLES DE QUANTIDADE (A GRANDE MUDANÇA) -->
                         <td class="text-center">
                             <div class="d-flex justify-content-center align-items-center">
-                                <!-- Botão de diminuir -->
                                 <form th:action="@{/carrinho/atualizar}" method="post" class="d-inline">
                                     <input type="hidden" name="produtoId" th:value="${item.produto.id}" />
                                     <input type="hidden" name="quantidade" th:value="${item.quantidade - 1}" />
                                     <button type="submit" class="btn btn-outline-secondary btn-sm">−</button>
                                 </form>
-                                
-                                <span class="mx-2" th:text="${item.quantidade}">1</span>
-                                
-                                <!-- Botão de aumentar -->
+                                <span class="mx-2" th:text="${item.quantidade}"></span>
                                 <form th:action="@{/carrinho/atualizar}" method="post" class="d-inline">
                                     <input type="hidden" name="produtoId" th:value="${item.produto.id}" />
                                     <input type="hidden" name="quantidade" th:value="${item.quantidade + 1}" />
@@ -61,10 +58,7 @@
                                 </form>
                             </div>
                         </td>
-                        <!-- Preço do item (Preço unitário * quantidade) -->
-                        <td class="text-end" th:text="|R$ ${{ #numbers.formatDecimal(item.produto.preco.multiply(item.quantidade), 1, 'COMMA', 2, 'POINT') }}|">R$ 29.90</td>
-                        
-                        <!-- BOTÃO DE REMOVER ATUALIZADO -->
+                        <td class="text-end" th:text="|R$ ${{ #numbers.formatDecimal(item.produto.preco.multiply(item.quantidade), 1, 'COMMA', 2, 'POINT') }}|"></td>
                         <td class="text-end">
                              <form th:action="@{/carrinho/remover}" method="post" class="d-inline">
                                 <input type="hidden" name="produtoId" th:value="${item.produto.id}" />
@@ -77,7 +71,7 @@
                     <tr>
                         <td colspan="2" class="text-end border-0"><h4>Total</h4></td>
                         <td class="text-end border-0">
-                            <h4 class="text-success" th:text="|R$ ${{ #numbers.formatDecimal(carrinho.total, 1, 'COMMA', 2, 'POINT') }}|">R$ 0,00</h4>
+                            <h4 class="text-success" th:text="|R$ ${{ #numbers.formatDecimal(carrinho.total, 1, 'COMMA', 2, 'POINT') }}|"></h4>
                         </td>
                         <td class="border-0"></td>
                     </tr>
@@ -93,6 +87,5 @@
 </div>
 
 <div th:replace="~{fragments :: carrinho-flutuante}"></div>
-
 </body>
 </html>

@@ -14,9 +14,7 @@
                 
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" th:href="@{/cardapio}">Pizzas</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/acompanhamentos}">Acompanhamentos</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/bebidas}">Bebidas</a></li>
+                        <!-- Links removidos para simplificar o fluxo -->
                     </ul>
                 </div>
 
@@ -26,13 +24,9 @@
                     </div>
                     <div sec:authorize="isAuthenticated()" class="text-white d-flex align-items-center">
                         <span class="navbar-text me-3">Olá, <strong sec:authentication="name">Usuário</strong>!</span>
-                        
-                        <!-- MUDANÇA AQUI: Botão "Meus Pedidos" só para o papel CLIENTE -->
                         <a sec:authorize="hasRole('CLIENTE')" th:href="@{/meus-pedidos}" class="btn btn-outline-info me-2">Meus Pedidos</a>
-                        
                         <a sec:authorize="hasRole('ADMIN')" th:href="@{/home}" class="btn btn-warning me-2">Painel Admin</a>
-                        <a sec:authorize="hasRole('ATENDENTE')" th:href="@{/atendente/home}" class="btn btn-warning me-2">Painel Atendente</a>
-                        
+                        <a sec:authorize="hasRole('ATENDENTE')" th:href="@{/home}" class="btn btn-warning me-2">Painel Atendente</a>
                         <a th:href="@{/logout}" class="btn btn-danger">Sair</a>
                     </div>
                 </div>
@@ -40,12 +34,15 @@
         </nav>
     </div>
 
-    <!-- FRAGMENTO 2: ÍCONE DE CARRINHO FLUTUANTE -->
+    <!-- ============================================================== -->
+    <!-- FRAGMENTO 2: ÍCONE DE CARRINHO FLUTUANTE (RESTAURADO) -->
+    <!-- ============================================================== -->
     <div th:fragment="carrinho-flutuante">
         <div th:if="${session.carrinho != null AND !session.carrinho.itens.isEmpty()}" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;">
             <a th:href="@{/carrinho/resumo}" class="btn btn-success rounded-circle p-3 shadow-lg position-relative">
                 <i class="bi bi-cart-fill" style="font-size: 1.5rem;"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${session.carrinho.itens.size()}"></span>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${session.carrinho.itens.size()}">
+                </span>
             </a>
         </div>
     </div>

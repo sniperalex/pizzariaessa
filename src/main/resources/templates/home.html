@@ -10,7 +10,6 @@
 </head>
 <body>
 <div th:replace="~{fragments :: navbar}"></div>
-
 <div class="container py-5 text-center">
 
     <div class="page-title-container d-inline-block">
@@ -24,41 +23,21 @@
             <h3 class="mb-0">Painel de Controle do Administrador</h3>
         </div>
         <div class="row justify-content-center g-4">
-            <div class="col-md-5">
-                <div class="card text-center h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Gerenciar Produtos</h5>
-                        <p class="card-text">Adicionar, editar ou remover pizzas, bebidas e acompanhamentos.</p>
-                        <a th:href="@{/admin/produtos}" class="btn btn-primary">Acessar</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="card text-center h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Gerenciar Usuários</h5>
-                        <p class="card-text">Visualizar, criar, editar e remover usuários do sistema.</p>
-                        <a th:href="@{/admin/usuarios}" class="btn btn-primary">Acessar</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5 mt-4">
-                 <div class="card text-center h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Ver Todos os Pedidos</h5>
-                        <p class="card-text">Acompanhar e atualizar o status de todos os pedidos.</p>
-                        <a th:href="@{/admin/pedidos}" class="btn btn-primary">Acessar</a>
-                    </div>
-                </div>
-            </div>
+            <div class="col-md-5"><div class="card text-center h-100 shadow-sm"><div class="card-body"><h5 class="card-title">Gerenciar Produtos</h5><p class="card-text">Adicionar, editar ou remover pizzas, bebidas e acompanhamentos.</p><a th:href="@{/admin/produtos}" class="btn btn-primary">Acessar</a></div></div></div>
+            <div class="col-md-5"><div class="card text-center h-100 shadow-sm"><div class="card-body"><h5 class="card-title">Gerenciar Usuários</h5><p class="card-text">Visualizar, criar, editar e remover usuários do sistema.</p><a th:href="@{/admin/usuarios}" class="btn btn-primary">Acessar</a></div></div></div>
+            <div class="col-md-5 mt-4"><div class="card text-center h-100 shadow-sm"><div class="card-body"><h5 class="card-title">Ver Todos os Pedidos</h5><p class="card-text">Acompanhar e atualizar o status de todos os pedidos.</p><a th:href="@{/admin/pedidos}" class="btn btn-primary">Acessar</a></div></div></div>
         </div>
     </div>
 
-    <!-- Mensagem para outros usuários logados -->
-    <div sec:authorize="!hasRole('ADMIN')">
-        <p class="lead">Use a barra de navegação para montar seu pedido!</p>
+    <!-- ÁREA DO ATENDENTE -->
+    <div sec:authorize="hasRole('ATENDENTE')">
+        <p class="lead">Use o botão "Painel Atendente" na barra de navegação para acessar suas ferramentas.</p>
     </div>
 
+    <!-- MENSAGEM PARA CLIENTES -->
+    <div sec:authorize="hasRole('CLIENTE')">
+        <p class="lead">Use a barra de navegação para montar seu pedido!</p>
+    </div>
 </div>
 </body>
 </html>
