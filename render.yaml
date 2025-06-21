@@ -1,0 +1,20 @@
+services:
+  # Define um novo serviço web
+  - type: web
+    name: pizzaria-mario # O nome da sua aplicação no Render
+    env: docker         # Especifica que usaremos um Dockerfile para construir
+    
+    # --- Configuração do Repositório ---
+    repo: https://github.com/sniperalex/pizzariaessa # Substitua se for diferente
+    branch: main        # O branch que o Render vai observar
+
+    # --- Configuração de Saúde e Porta ---
+    # O Render usa isso para saber se sua aplicação iniciou com sucesso
+    healthCheckPath: /login 
+    
+    # --- Variáveis de Ambiente ---
+    # Aqui é onde você configura a conexão com o MongoDB Atlas!
+    envVars:
+      - key: SPRING_DATA_MONGODB_URI
+        fromSecret: true # Marcar como "true" para que você possa colar o valor no painel do Render sem expô-lo no código.
+      # Você pode adicionar outras variáveis aqui se precisar

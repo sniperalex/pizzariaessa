@@ -12,11 +12,6 @@
 <div th:replace="~{fragments :: navbar}"></div>
 
 <div class="container py-5">
-    <div class="text-end mb-3">
-        <a th:href="@{/home}" class="btn btn-secondary">Voltar para Home</a>
-        <a th:href="@{/logout}" class="btn btn-danger ms-2">Sair</a>
-    </div>
-
     <div class="card shadow-sm mb-5">
         <div class="card-header">
             <h3>Cadastrar Novo Produto</h3>
@@ -25,63 +20,72 @@
             <form method="POST" th:action="@{/admin/produtos}" th:object="${produtoDto}" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome do Produto</label>
-                    <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+                    <input type="text" class="form-control" th:field="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
                 </div>
                 <div class="mb-3">
                     <label for="descricao" class="form-label">Descrição</label>
-                    <textarea class="form-control" id="descricao" th:field="*{descricao}" rows="3" required></textarea>
+                    <textarea class="form-control" th:field="*{descricao}" rows="3" th:classappend="${#fields.hasErrors('descricao')} ? 'is-invalid' : ''"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="preco" class="form-label">Preço (ex: 39.90)</label>
-                        <input type="number" step="0.01" class="form-control" id="preco" th:field="*{preco}" required>
+                        <input type="number" step="0.01" class="form-control" th:field="*{preco}" th:classappend="${#fields.hasErrors('preco')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}"></div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="categoria" class="form-label">Categoria</label>
-                        <select class="form-select" id="categoria" th:field="*{categoria}" required>
-                            <option value="Pizza" selected>Pizza</option>
+                        <select class="form-select" th:field="*{categoria}" th:classappend="${#fields.hasErrors('categoria')} ? 'is-invalid' : ''">
+                            <option value="">Selecione...</option>
+                            <option value="Pizza">Pizza</option>
                             <option value="Acompanhamento">Acompanhamento</option>
                             <option value="Bebida">Bebida</option>
                         </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></div>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="imagemFile" class="form-label">Imagem do Produto</label>
-                    <input class="form-control" type="file" id="imagemFile" th:field="*{imagemFile}" accept="image/png, image/jpeg" required>
+                    <input class="form-control" type="file" th:field="*{imagemFile}" accept="image/png, image/jpeg">
                 </div>
                 <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
             </form>
         </div>
     </div>
     
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
     <div class="card shadow-sm">
          <div class="card-header"><h3>Produtos Cadastrados</h3></div>
         <div class="card-body">
-            <table class="table table-striped table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th style="width: 15%;">Imagem</th>
-                        <th>Nome</th>
-                        <th>Preço</th>
-                        <th>Categoria</th>
-                        <th style="width: 20%;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="produto : ${produtos}">
-                        <td><img th:src="@{/api/produtos/{id}/imagem(id=${produto.id})}" alt="Imagem" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;"/></td>
-                        <td th:text="${produto.nome}"></td>
-                        <td th:text="|R$ ${{ #numbers.formatDecimal(produto.preco, 1, 'COMMA', 2, 'POINT') }}|"></td>
-                        <td th:text="${produto.categoria}"></td>
-                        <td>
-                            <a th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}" class="btn btn-sm btn-warning">Editar</a>
-                            <form th:action="@{/admin/produtos/{id}/remover(id=${produto.id})}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este produto?');">
-                                <button type="submit" class="btn btn-sm btn-danger">Remover</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 10%;">Imagem</th>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Categoria</th>
+                            <th class="text-end" style="width: 15%;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="produto : ${produtos}">
+                            <td><img th:src="@{/api/produtos/{id}/imagem(id=${produto.id})}" alt="Imagem" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;"/></td>
+                            <td th:text="${produto.nome}"></td>
+                            <td th:text="|R$ ${{ #numbers.formatDecimal(produto.preco, 1, 'COMMA', 2, 'POINT') }}|"></td>
+                            <td th:text="${produto.categoria}"></td>
+                            <td class="text-end">
+                                <a th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-fill"></i></a>
+                                <form th:action="@{/admin/produtos/{id}/remover(id=${produto.id})}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este produto?');">
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

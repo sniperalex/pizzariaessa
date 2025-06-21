@@ -11,13 +11,17 @@
 <div th:replace="~{fragments :: navbar}"></div>
 
 <div class="container py-5">
-    <div class="page-title-container d-inline-block mb-4">
-        <h1 class="mb-0">Dashboard de Hoje</h1>
+    <div class="text-center"> <!-- Centraliza todo o conteúdo do título -->
+        <div class="page-title-container d-inline-block mb-4">
+            <h1 class="mb-0">Dashboard de Hoje</h1>
+        </div>
     </div>
 
+    <!-- CARDS DE ESTATÍSTICAS DE PEDIDOS -->
     <div class="row g-4">
         <div th:each="entry : ${contagemStatus}" class="col-md-4 col-lg-3">
-            <div class="card text-white text-center shadow" th:classappend="${entry.key.name() == 'ENTREGUE'} ? 'bg-success' : (${entry.key.name() == 'CANCELADO'} ? 'bg-danger' : 'bg-primary')">
+            <div class="card text-white text-center shadow" 
+                 th:classappend="${entry.key.name() == 'ENTREGUE'} ? 'bg-success' : (${entry.key.name() == 'CANCELADO'} ? 'bg-danger' : 'bg-primary')">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${entry.key}">STATUS</h5>
                     <p class="display-4 fw-bold" th:text="${entry.value}">0</p>
@@ -25,12 +29,21 @@
             </div>
         </div>
     </div>
+    
     <hr class="my-5">
     
+    <!-- AQUI ESTÁ A MUDANÇA -->
+    <div class="text-center mb-4">
+        <div class="page-title-container d-inline-block">
+            <h2 class="mb-0">Ações de Gerenciamento</h2>
+        </div>
+    </div>
+    
+    <!-- CARDS DE NAVEGAÇÃO -->
     <div class="row justify-content-center g-4">
-        <div class="col-md-4"><div class="card text-center h-100"><div class="card-body"><h5 class="card-title">Gerenciar Produtos</h5><p>Adicionar, editar ou remover itens do cardápio.</p><a th:href="@{/admin/produtos}" class="btn btn-secondary">Acessar</a></div></div></div>
-        <div class="col-md-4"><div class="card text-center h-100"><div class="card-body"><h5 class="card-title">Gerenciar Usuários</h5><p>Visualizar e gerenciar todos os usuários.</p><a th:href="@{/admin/usuarios}" class="btn btn-secondary">Acessar</a></div></div></div>
-        <div class="col-md-4"><div class="card text-center h-100"><div class="card-body"><h5 class="card-title">Ver Todos os Pedidos</h5><p>Acessar o histórico completo de pedidos.</p><a th:href="@{/admin/pedidos}" class="btn btn-secondary">Acessar</a></div></div></div>
+        <div class="col-md-4"><div class="card text-center h-100 shadow-sm"><div class="card-body"><h5 class="card-title">Gerenciar Produtos</h5><p>Adicionar, editar ou remover itens do cardápio.</p><a th:href="@{/admin/produtos}" class="btn btn-secondary">Acessar</a></div></div></div>
+        <div class="col-md-4"><div class="card text-center h-100 shadow-sm"><div class="card-body"><h5 class="card-title">Gerenciar Usuários</h5><p>Visualizar e gerenciar todos os usuários.</p><a th:href="@{/admin/usuarios}" class="btn btn-secondary">Acessar</a></div></div></div>
+        <div class="col-md-4"><div class="card text-center h-100 shadow-sm"><div class="card-body"><h5 class="card-title">Ver Todos os Pedidos</h5><p>Acessar o histórico completo de pedidos.</p><a th:href="@{/admin/pedidos}" class="btn btn-secondary">Acessar</a></div></div></div>
     </div>
 </div>
 </body>

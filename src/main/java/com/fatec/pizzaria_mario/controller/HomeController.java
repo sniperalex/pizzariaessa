@@ -16,13 +16,12 @@ public class HomeController {
             boolean isAtendente = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ATENDENTE"));
 
             if (isAdmin) {
-                return "redirect:/admin/dashboard";
+                return "redirect:/admin/dashboard"; // << Redireciona para o novo dashboard
             }
             if (isAtendente) {
                 return "redirect:/atendente/home";
             }
         }
-        // Clientes e outros usuários logados vão para o cardápio como padrão
-        return "redirect:/cardapio";
+        return "redirect:/cardapio"; // Clientes vão direto para o cardápio
     }
 }

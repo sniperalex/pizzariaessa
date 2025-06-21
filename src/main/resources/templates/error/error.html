@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Erro no Servidor (500)</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body class="bg-dark text-white">
+<div class="container text-center d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div>
+        <h1 class="display-1 fw-bold text-danger">500</h1>
+        <h2>Opa! Algo deu errado.</h2>
+        <p class="lead text-white-50">Houve um erro inesperado em nosso servidor. Nossa equipe já foi notificada.</p>
+        
+        <!-- Bloco para mostrar detalhes do erro apenas em ambiente de desenvolvimento -->
+        <div th:if="${errorMessage}" class="alert alert-light mt-4 text-start text-dark">
+            <strong>Detalhes técnicos (apenas para desenvolvimento):</strong>
+            <p class="font-monospace bg-dark text-white p-2 rounded small" th:text="${errorMessage}"></p>
+        </div>
+        
+        <a th:href="@{/}" class="btn btn-primary btn-lg mt-3">Voltar para a Página Inicial</a>
+    </div>
+</div>
+</body>
+</html>

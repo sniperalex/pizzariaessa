@@ -8,6 +8,7 @@ import com.fatec.pizzaria_mario.dto.ProdutoDTO;
 import com.fatec.pizzaria_mario.repository.PedidoRepository;
 import com.fatec.pizzaria_mario.repository.ProdutoRepository;
 import com.fatec.pizzaria_mario.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -40,30 +42,48 @@ public class AdminController {
     @Autowired private PedidoRepository pedidoRepository;
     @Autowired private PasswordEncoder passwordEncoder;
 
+    // ==========================================================
+    // MÉTODO DO DASHBOARD (RESTAURADO)
+    // ==========================================================
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
         LocalDate hoje = LocalDate.now();
         LocalDateTime inicioDoDia = hoje.atStartOfDay();
         LocalDateTime fimDoDia = hoje.atTime(LocalTime.MAX);
+        
         Map<StatusPedido, Long> contagemStatus = new EnumMap<>(StatusPedido.class);
         for(StatusPedido status : StatusPedido.values()) {
             long contagem = pedidoRepository.countByStatusAndDataHoraBetween(status, inicioDoDia, fimDoDia);
             contagemStatus.put(status, contagem);
         }
+
         model.addAttribute("contagemStatus", contagemStatus);
         return "admin-dashboard";
     }
 
+    // --- GERENCIAMENTO DE PRODUTOS ---
     @GetMapping("/produtos")
     public String gerenciarProdutos(Model model) {
+        if (!model.containsAttribute("produtoDto")) {
+            model.addAttribute("produtoDto", new ProdutoDTO());
+        }
         List<Produto> produtos = produtoRepository.findAll(Sort.by(Sort.Direction.ASC, "categoria", "nome"));
         model.addAttribute("produtos", produtos);
-        model.addAttribute("produtoDto", new ProdutoDTO());
         return "admin-produtos";
     }
 
     @PostMapping("/produtos")
-    public String cadastrarProduto(@ModelAttribute ProdutoDTO produtoDto) throws IOException {
+    public String cadastrarProduto(
+            @Valid @ModelAttribute("produtoDto") ProdutoDTO produtoDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) throws IOException {
+        
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.produtoDto", bindingResult);
+            redirectAttributes.addFlashAttribute("produtoDto", produtoDto);
+            return "redirect:/admin/produtos";
+        }
+        
         Produto produto = new Produto();
         produto.setNome(produtoDto.getNome());
         produto.setDescricao(produtoDto.getDescricao());
@@ -76,9 +96,11 @@ public class AdminController {
             produto.setImagemTipo(imagemFile.getContentType());
         }
         produtoRepository.save(produto);
+        redirectAttributes.addFlashAttribute("successMessage", "Produto '" + produto.getNome() + "' cadastrado com sucesso!");
         return "redirect:/admin/produtos";
     }
 
+    // --- GERENCIAMENTO DE USUÁRIOS ---
     @GetMapping("/usuarios")
     public String listarUsuarios(Model model) {
         model.addAttribute("usuarios", usuarioRepository.findAll());
@@ -129,6 +151,7 @@ public class AdminController {
         return "redirect:/admin/usuarios";
     }
     
+    // --- GERENCIAMENTO DE PEDIDOS ---
     @GetMapping("/pedidos")
     public String listarTodosPedidos(Model model, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @RequestParam(required = false) String status, @RequestParam(required = false) String cliente) {
         List<Pedido> pedidos;

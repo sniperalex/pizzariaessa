@@ -6,17 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class LoginController {
 
-    // Este método foi REMOVIDO para resolver o conflito
-    // @GetMapping("/")
-    // public String redirectToLogin() {
-    //     return "redirect:/login";
-    // }
-
-    // Este método é o único que precisa estar aqui agora
+    // ÚNICA RESPONSABILIDADE: MOSTRAR A PÁGINA DE LOGIN
     @GetMapping("/login")
     public String loginPage() {
         return "login"; 
     }
-
-    // O método @GetMapping("/home") foi REMOVIDO daqui.
 }
