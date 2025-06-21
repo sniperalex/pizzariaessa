@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Todos os Pedidos</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments :: navbar}"></div>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Histórico de Todos os Pedidos</h1>
+        <a th:href="@{/home}" class="btn btn-secondary">Voltar para o Painel</a>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:each="pedido : ${pedidos}" class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Pedido #<span th:text="${#strings.substring(pedido.id, 0, 8)}"></span></strong>
+                <span class="ms-3 text-muted" th:text="'Feito em: ' + ${#temporals.format(pedido.dataHora, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><b>Cliente:</b> <span th:text="${pedido.nomeCliente}"></span></p>
+                    <p><b>Endereço:</b> <span th:text="${pedido.enderecoEntrega}"></span></p>
+                    <p><b>Pagamento:</b> <span class="text-capitalize" th:text="${pedido.formaPagamento}"></span></p>
+                    <h5 class="text-end">Total: <span class="text-success" th:text="|R$ ${{ #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT') }}|"></span></h5>
+                </div>
+                <div class="col-md-6">
+                    <h6>Itens:</h6>
+                    <ul><li th:each="item : ${pedido.itens}" th:text="${item.quantidade} + 'x ' + ${item.produto.nome}"></li></ul>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <form th:action="@{/pedidos/alterar-status}" method="post" class="d-flex align-items-center justify-content-end">
+                <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
+                <label for="status" class="form-label me-2 mb-0"><b>Status do Pedido:</b></label>
+                <select name="status" class="form-select w-auto me-2">
+                    <option th:each="st : ${T(com.fatec.pizzaria_mario.domain.StatusPedido).values()}" 
+                            th:value="${st}" 
+                            th:text="${st}"
+                            th:selected="${st == pedido.status}"></option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-info">Atualizar Status</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

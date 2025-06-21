@@ -8,13 +8,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RegisterController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -24,15 +25,26 @@ public class RegisterController {
         return "register";
     }
 
+    // ATUALIZADO para receber o e-mail
     @PostMapping("/register")
-    public String registerUser(Usuario usuario) {
+    public String registerUser(Usuario usuario, @RequestParam("email") String email) {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        
-        // MUDANÇA: Usando o novo método para garantir consistência
+        usuario.setEmail(email);
         usuario.addRole("CLIENTE"); 
-        
         usuarioRepository.save(usuario);
-        
         return "redirect:/login?success";
+    }
+
+    // Lógica do "Esqueci a Senha"
+    @GetMapping("/esqueci-senha")
+    public String showForgotPasswordForm() {
+        return "esqueci-senha";
+    }
+
+    @PostMapping("/esqueci-senha")
+    public String processForgotPassword(RedirectAttributes redirectAttributes) {
+        // Lógica "fake": apenas mostra uma mensagem de sucesso
+        redirectAttributes.addFlashAttribute("resetSuccessMessage", "Se o e-mail estiver cadastrado, um link de recuperação foi enviado.");
+        return "redirect:/login";
     }
 }

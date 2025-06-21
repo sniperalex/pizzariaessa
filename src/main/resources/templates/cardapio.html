@@ -1,31 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Cardápio - Pizzaria do Mario</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
-    <!-- LINHA NOVA PARA OS ÍCONES DO BOOTSTRAP -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 
+<!-- INCLUI A NAVBAR -->
+<div th:replace="~{fragments :: navbar}"></div>
+
 <div class="container py-5">
+    <!-- ... (o resto do conteúdo do cardápio continua igual) ... -->
     <div class="text-center mb-5">
         <div class="page-title-container">
             <h1 class="display-4">Nosso Cardápio</h1>
-            <p class="lead mb-0">Escolha suas pizzas favoritas!</p>
+            <p class="lead mb-0">As melhores pizzas da região, feitas com amor!</p>
         </div>
     </div>
-
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <div class="col" th:each="produto : ${produtos}">
             <div class="card h-100 shadow-sm">
                 <img th:src="@{/produtos/{id}/imagem(id=${produto.id})}" class="card-img-top" alt="Imagem do Produto" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${produto.nome}">Nome do Produto</h5>
-                    <p class="card-text" th:text="${produto.descricao}">Descrição.</p>
-                    <h4 class="text-end text-success" th:text="|R$ ${{ #numbers.formatDecimal(produto.preco, 1, 'COMMA', 2, 'POINT') }}|">R$ 29,90</h4>
+                    <h5 class="card-title" th:text="${produto.nome}"></h5>
+                    <p class="card-text" th:text="${produto.descricao}"></p>
+                    <h4 class="text-end text-success" th:text="|R$ ${{ #numbers.formatDecimal(produto.preco, 1, 'COMMA', 2, 'POINT') }}|"></h4>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-center pb-3">
                      <form th:action="@{/carrinho/adicionar}" method="post">
@@ -36,13 +38,10 @@
             </div>
         </div>
     </div>
-    <div class="text-center mt-5">
-        <a th:href="@{/acompanhamentos}" class="btn btn-secondary btn-lg">Ver Acompanhamentos</a>
-    </div>
 </div>
 
-<!-- LINHA NOVA QUE INCLUI O ÍCONE DO CARRINHO -->
+<!-- INCLUI O ÍCONE FLUTUANTE DO CARRINHO -->
 <div th:replace="~{fragments :: carrinho-flutuante}"></div>
-
+    
 </body>
 </html>

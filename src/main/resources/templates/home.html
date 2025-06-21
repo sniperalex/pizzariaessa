@@ -5,32 +5,60 @@
     <meta charset="UTF-8">
     <title>Página Inicial - Pizzaria do Mario</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
+<div th:replace="~{fragments :: navbar}"></div>
+
 <div class="container py-5 text-center">
-    <div class="page-title-container">
+
+    <div class="page-title-container d-inline-block">
         <h1 class="display-5">Bem-vindo, <span sec:authentication="name">Usuário</span>!</h1>
-        <p class="lead">Seu login foi efetuado com sucesso.</p>
     </div>
     <hr class="my-4">
     
-    <!-- Este bloco SÓ APARECE se o usuário for ADMIN -->
-    <div sec:authorize="hasRole('ADMIN')" class="alert alert-info mt-4">
-        <h4>Painel do Administrador</h4>
-        <p>Como administrador, você tem acesso a áreas especiais.</p>
-        <a th:href="@{/admin/produtos}" class="btn btn-primary">Gerenciar Produtos</a>
+    <!-- ÁREA DO ADMIN -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <div class="page-title-container mb-4 d-inline-block">
+            <h3 class="mb-0">Painel de Controle do Administrador</h3>
+        </div>
+        <div class="row justify-content-center g-4">
+            <div class="col-md-5">
+                <div class="card text-center h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Gerenciar Produtos</h5>
+                        <p class="card-text">Adicionar, editar ou remover pizzas, bebidas e acompanhamentos.</p>
+                        <a th:href="@{/admin/produtos}" class="btn btn-primary">Acessar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="card text-center h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Gerenciar Usuários</h5>
+                        <p class="card-text">Visualizar, criar, editar e remover usuários do sistema.</p>
+                        <a th:href="@{/admin/usuarios}" class="btn btn-primary">Acessar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 mt-4">
+                 <div class="card text-center h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Ver Todos os Pedidos</h5>
+                        <p class="card-text">Acompanhar e atualizar o status de todos os pedidos.</p>
+                        <a th:href="@{/admin/pedidos}" class="btn btn-primary">Acessar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Bloco para usuários normais (CLIENTE, ATENDENTE) que possam cair aqui -->
-    <div sec:authorize="!hasRole('ADMIN')" class="mt-4">
-        <p>Selecione uma das opções abaixo para continuar.</p>
+    <!-- Mensagem para outros usuários logados -->
+    <div sec:authorize="!hasRole('ADMIN')">
+        <p class="lead">Use a barra de navegação para montar seu pedido!</p>
     </div>
 
-    <div class="mt-4">
-        <a th:href="@{/cardapio}" class="btn btn-success">Ver Cardápio</a>
-        <a th:href="@{/logout}" class="btn btn-danger">Sair</a>
-    </div>
 </div>
 </body>
 </html>

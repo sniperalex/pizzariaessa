@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Meus Pedidos</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Meus Pedidos</h2>
+        <a th:href="@{/cardapio}" class="btn btn-primary">Fazer Novo Pedido</a>
+    </div>
+
+    <div th:if="${pedidos.isEmpty()}" class="alert alert-info text-center">
+        Você ainda não fez nenhum pedido.
+    </div>
+
+    <div th:each="pedido : ${pedidos}" class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Pedido #<span th:text="${#strings.substring(pedido.id, 0, 8)}"></span></strong>
+                <span class="ms-3 text-muted" th:text="'Feito em: ' + ${#temporals.format(pedido.dataHora, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <span class="badge" th:classappend="${pedido.status == T(com.fatec.pizzaria_mario.domain.StatusPedido).ENTREGUE} ? 'bg-success' : 'bg-warning text-dark'" th:text="${pedido.status}">PENDENTE</span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5>Itens do Pedido</h5>
+                    <ul class="list-group list-group-flush">
+                        <li th:each="item : ${pedido.itens}" class="list-group-item ps-0">
+                            <span th:text="${item.quantidade} + 'x '"></span>
+                            <span th:text="${item.produto.nome}"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <h5>Detalhes</h5>
+                    <p class="mb-1"><strong>Endereço:</strong> <span th:text="${pedido.enderecoEntrega}"></span></p>
+                    <p class="mb-1"><strong>Pagamento:</strong> <span class="text-capitalize" th:text="${pedido.formaPagamento}"></span></p>
+                    <h5 class="mt-2">Total: <span class="text-success" th:text="|R$ ${{ #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT') }}|"></span></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: carrinho-flutuante}"></div>
+</body>
+</html>

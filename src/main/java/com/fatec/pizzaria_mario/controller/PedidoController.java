@@ -1,62 +1,72 @@
 package com.fatec.pizzaria_mario.controller;
 
 import com.fatec.pizzaria_mario.domain.*;
-import com.fatec.pizzaria_mario.repository.ClienteRepository;
 import com.fatec.pizzaria_mario.repository.PedidoRepository;
+import com.fatec.pizzaria_mario.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class PedidoController {
 
     @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
     private PedidoRepository pedidoRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    // Método que recebe os dados do formulário de checkout
     @PostMapping("/pedidos")
-    public String finalizarPedido(
-            @ModelAttribute Cliente cliente, 
-            @RequestParam("formaPagamento") String formaPagamento,
-            HttpSession session) {
-
+    public String finalizarPedido(@ModelAttribute Usuario usuarioForm, @RequestParam("formaPagamento") String formaPagamento, @AuthenticationPrincipal Usuario usuarioLogado, HttpSession session) {
         Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
-        if (carrinho == null || carrinho.getItens().isEmpty()) {
-            return "redirect:/cardapio"; // Carrinho vazio, não há o que finalizar
-        }
+        if (carrinho == null || carrinho.getItens().isEmpty()) { return "redirect:/cardapio"; }
 
-        // 1. Salva o cliente
-        clienteRepository.save(cliente);
+        usuarioLogado.setNomeCompleto(usuarioForm.getNomeCompleto());
+        usuarioLogado.setTelefone(usuarioForm.getTelefone());
+        usuarioLogado.setEndereco(usuarioForm.getEndereco());
+        usuarioRepository.save(usuarioLogado);
 
-        // 2. Cria o objeto Pedido
         Pedido pedido = new Pedido();
-        pedido.setCliente(cliente);
+        pedido.setUsuarioId(usuarioLogado.getId());
+        pedido.setNomeCliente(usuarioLogado.getNomeCompleto());
+        pedido.setEnderecoEntrega(usuarioLogado.getEndereco());
         pedido.setItens(carrinho.getItens());
         pedido.setTotal(carrinho.getTotal());
         pedido.setDataHora(LocalDateTime.now());
         pedido.setStatus(StatusPedido.PENDENTE);
         pedido.setFormaPagamento(formaPagamento);
-        
-        // 3. Salva o pedido no banco de dados
         pedidoRepository.save(pedido);
-
-        // 4. Limpa o carrinho da sessão
         session.removeAttribute("carrinho");
         
-        // 5. Redireciona para a página de sucesso
-        return "redirect:/pedidos/confirmado";
+        return "redirect:/pedidos/" + pedido.getId() + "/confirmado";
     }
 
-    // Método que mostra a página de confirmação
-    @GetMapping("/pedidos/confirmado")
-    public String pedidoConfirmado() {
+    @GetMapping("/pedidos/{id}/confirmado")
+    public String pedidoConfirmado(@PathVariable String id, Model model) {
+        pedidoRepository.findById(id).ifPresent(pedido -> model.addAttribute("pedido", pedido));
         return "pedido-confirmado";
+    }
+
+    @GetMapping("/meus-pedidos")
+    public String meusPedidos(@AuthenticationPrincipal Usuario usuarioLogado, Model model) {
+        List<Pedido> pedidos = pedidoRepository.findByUsuarioIdOrderByDataHoraDesc(usuarioLogado.getId());
+        model.addAttribute("pedidos", pedidos);
+        return "meus-pedidos";
+    }
+
+    @PostMapping("/pedidos/alterar-status")
+    public String alterarStatusPedido(@RequestParam("pedidoId") String pedidoId, @RequestParam("status") StatusPedido status, RedirectAttributes redirectAttributes) {
+        pedidoRepository.findById(pedidoId).ifPresent(pedido -> {
+            pedido.setStatus(status);
+            pedidoRepository.save(pedido);
+            redirectAttributes.addFlashAttribute("successMessage", "Status do pedido #" + pedidoId.substring(0, 8) + " atualizado!");
+        });
+        return "redirect:/admin/pedidos";
     }
 }

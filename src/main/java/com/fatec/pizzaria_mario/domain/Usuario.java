@@ -21,46 +21,43 @@ public class Usuario implements UserDetails {
 
     @Id
     private String id;
-
-    // CORREÇÃO 1: Renomeado para "login" para ser consistente com o resto da aplicação
     @Indexed(unique = true)
     private String login;
-
-    // CORREÇÃO 2: Renomeado para "senha"
     private String senha;
-
-    // Manteve-se como Set<String> para flexibilidade
+    private String email;
     private Set<String> roles = new HashSet<>();
-
-    // --- MÉTODOS OBRIGATÓRIOS DA INTERFACE UserDetails ---
+    private String nomeCompleto;
+    private String telefone;
+    private String endereco;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // CORREÇÃO 3: Adiciona o prefixo "ROLE_" automaticamente, que é o padrão do Spring Security
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
                 .collect(Collectors.toList());
     }
 
-    // Adaptado para o nome "senha"
     @Override
     public String getPassword() {
         return this.senha;
     }
 
-    // Adaptado para o nome "login"
     @Override
     public String getUsername() {
         return this.login;
     }
-    
-    // Método extra para adicionar papéis de forma segura
+
+    // ==========================================================
+    // MÉTODO QUE FALTAVA - ADICIONE ESTE BLOCO
+    // ==========================================================
     public void addRole(String role) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
+        }
         this.roles.add(role.toUpperCase());
     }
+    // ==========================================================
 
-
-    // Os métodos abaixo continuam retornando 'true' por padrão
     @Override
     public boolean isAccountNonExpired() { return true; }
 
