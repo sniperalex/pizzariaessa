@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
 </head>
 <body class="bg-light">
+<div th:replace="~{fragments :: navbar}"></div>
 <div class="container text-center py-5">
     <div class="py-5">
         <h1 class="display-1 text-success">✔</h1>
@@ -15,7 +16,8 @@
         <p>Acompanhe o status do seu pedido na sua área de cliente.</p>
         <!-- BOTÃO ATUALIZADO para ir para a página "Meus Pedidos" -->
         <a th:if="${#authorization.expression('hasRole(''ATENDENTE'')')}" class="btn btn-primary btn-lg mt-3" th:href="@{/admin/pedidos}" role="button">Ver Todos os Pedidos</a>
-        <a th:if="${!#authorization.expression('hasRole(''ATENDENTE'')')}" class="btn btn-primary btn-lg mt-3" th:href="@{/meus-pedidos}" role="button">Ver Meus Pedidos</a>
+        <a th:if="${!#authorization.expression('hasRole(''ATENDENTE'')')}" class="btn btn-primary btn-lg mt-3 me-2" th:href="@{/meus-pedidos}" role="button">Ver Meus Pedidos</a>
+        <a class="btn btn-outline-success btn-lg mt-3" href="/cardapio/inicio"><i class="bi bi-plus-circle"></i> Fazer novo pedido</a>
     </div>
 </div>
 </body>
