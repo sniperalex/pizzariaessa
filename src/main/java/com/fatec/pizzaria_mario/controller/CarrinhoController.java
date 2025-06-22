@@ -65,4 +65,15 @@ public class CarrinhoController {
         }
         return "redirect:/carrinho/resumo";
     }
+
+    @PostMapping("/definir-origem")
+    public String definirOrigemPedido(@RequestParam("origemPedido") String origemPedido, HttpSession session) {
+        session.setAttribute("origemPedido", origemPedido);
+        return "redirect:/cardapio/inicio";
+    }
+
+    public static String getOrigemPedidoFromSession(HttpSession session) {
+        Object origem = session.getAttribute("origemPedido");
+        return origem != null ? origem.toString() : null;
+    }
 }

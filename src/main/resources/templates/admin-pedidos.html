@@ -19,7 +19,7 @@
             <form th:action="@{/admin/pedidos}" method="get" class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label for="cliente" class="form-label">Por Nome do Cliente</label>
-                    <input type="text" id="cliente" name="cliente" class="form-control" placeholder="Digite o nome..." th:value="${clienteFiltro}">
+                    <input type="text" id="cliente" name="cliente" class="form-control" placeholder="Ex: Maria Silva" th:value="${clienteFiltro}">
                 </div>
                 <div class="col-md-3">
                     <label for="status" class="form-label">Por Status</label>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="col-md-3">
                     <label for="data" class="form-label">Por Data</label>
-                    <input type="date" id="data" name="data" class="form-control" th:value="${dataFiltro}">
+                    <input type="date" id="data" name="data" class="form-control" placeholder="dd/mm/aaaa" th:value="${dataFiltro}">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">Filtrar</button>
@@ -45,10 +45,10 @@
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover align-middle">
             <thead class="table-dark">
-                <tr><th>#ID</th><th>Data/Hora</th><th>Cliente</th><th>Endereço</th><th>Itens</th><th>Total</th><th style="width: 250px;">Alterar Status</th></tr>
+                <tr><th>#ID</th><th>Data/Hora</th><th>Cliente</th><th>Endereço</th><th>Itens</th><th>Origem</th><th>Total</th><th style="width: 250px;">Alterar Status</th></tr>
             </thead>
             <tbody>
-                <tr th:if="${pedidos.isEmpty()}"><td colspan="7" class="text-center p-4">Nenhum pedido encontrado para os filtros selecionados.</td></tr>
+                <tr th:if="${pedidos.isEmpty()}"><td colspan="8" class="text-center p-4">Nenhum pedido encontrado para os filtros selecionados.</td></tr>
                 <tr th:each="pedido : ${pedidos}">
                     <td th:text="${#strings.substring(pedido.id, 0, 8)}"></td>
                     <td class="text-nowrap" th:text="${#temporals.format(pedido.dataHora, 'dd/MM/yy HH:mm')}"></td>
@@ -58,16 +58,33 @@
                         <ul class="list-unstyled mb-0 ps-3">
                             <li th:each="item : ${pedido.itens}" th:text="${item.quantidade} + 'x ' + (item.produto != null ? item.produto.nome : 'Produto removido')"></li>
                         </ul>
+                        <div th:if="${pedido.observacao}" class="mt-2 small text-secondary">
+                            <strong>Obs.:</strong> <span th:text="${pedido.observacao}"></span>
+                        </div>
+                        <div th:if="${pedido.formaPagamento == 'dinheiro'}" class="mt-1 small text-secondary">
+                            <span th:if="${pedido.precisaTroco != null and pedido.precisaTroco}"><strong>Troco para:</strong> <span th:text="${pedido.valorTroco}"></span></span>
+                            <span th:if="${pedido.precisaTroco != null and !pedido.precisaTroco}"><strong>Sem troco</strong></span>
+                            <span th:if="${pedido.precisaTroco == null}"><strong>Sem informação de troco</strong></span>
+                        </div>
+                    </td>
+                    <td>
+                        <span th:switch="${pedido.origemPedido}">
+                            <span th:case="'app'">App</span>
+                            <span th:case="'telefone'">Telefone</span>
+                            <span th:case="'balcao'">Balcão</span>
+                            <span th:case="*">-</span>
+                        </span>
                     </td>
                     <td class="text-nowrap" th:text="|R$ ${{ #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT') }}|"></td>
                     <td>
-                        <form th:action="@{/pedidos/alterar-status}" method="post" class="d-flex">
+                        <form th:action="@{/pedidos/alterar-status}" method="post" class="d-flex me-2">
                             <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
                             <select name="status" class="form-select form-select-sm me-2">
                                 <option th:each="st : ${T(com.fatec.pizzaria_mario.domain.StatusPedido).values()}" th:value="${st}" th:text="${st}" th:selected="${st == pedido.status}"></option>
                             </select>
                             <button type="submit" class="btn btn-sm btn-info">OK</button>
                         </form>
+                        <a th:href="@{'/admin/pedidos/' + ${pedido.id} + '/imprimir'}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2 w-100"><i class="bi bi-printer"></i> Imprimir</a>
                     </td>
                 </tr>
             </tbody>

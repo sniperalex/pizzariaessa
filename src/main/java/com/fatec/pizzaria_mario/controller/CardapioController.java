@@ -3,9 +3,12 @@ package com.fatec.pizzaria_mario.controller;
 import com.fatec.pizzaria_mario.domain.Carrinho;
 import com.fatec.pizzaria_mario.domain.ItemPedido;
 import com.fatec.pizzaria_mario.domain.Produto;
+import com.fatec.pizzaria_mario.domain.Usuario;
 import com.fatec.pizzaria_mario.repository.ProdutoRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +50,13 @@ public class CardapioController {
 
     // NOVO: Tela inicial para escolha de tipo de pizza
     @GetMapping("/cardapio/inicio")
-    public String escolherTipoPizza() {
+    public String escolherTipoPizza(HttpSession session, @AuthenticationPrincipal Usuario usuario) {
+        if (usuario != null && (usuario.getRoles().contains("ADMIN") || usuario.getRoles().contains("ATENDENTE"))) {
+            Object origem = session.getAttribute("origemPedido");
+            if (origem == null) {
+                return "selecionar-origem-pedido";
+            }
+        }
         return "selecionar-sabor";
     }
 

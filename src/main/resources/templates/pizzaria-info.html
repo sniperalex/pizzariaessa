@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sobre a Pizzaria do Mario</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments :: navbar}"></div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img th:src="@{/images/logo_pizzaria.jpg}" alt="Logo" width="80" class="mb-3">
+                        <h1 class="display-5">Pizzaria do Mario</h1>
+                        <p class="lead">A melhor pizza da cidade desde 1995!</p>
+                    </div>
+                    <hr>
+                    <h4>Endereço</h4>
+                    <p>Rua das Pizzas, 123 - Centro<br>São Paulo/SP - CEP 01000-000</p>
+                    <h4>Telefone</h4>
+                    <p>(11) 4002-8922</p>
+                    <h4>Horário de Funcionamento</h4>
+                    <p>Segunda a Domingo: 18h às 23h</p>
+                    <h4>Sobre nós</h4>
+                    <p>Tradição, qualidade e aquele sabor especial que só a Pizzaria do Mario tem! Venha nos visitar ou peça pelo app. Temos delivery rápido e atendimento de primeira.</p>
+                    <div class="text-center mt-4">
+                        <img th:src="@{/images/logo_pizzaria2.png}" alt="Foto da pizzaria" class="img-fluid rounded shadow" style="max-width: 300px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

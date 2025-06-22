@@ -25,4 +25,8 @@ public class Pedido {
     private LocalDateTime dataHora;
     private BigDecimal total;
     private String formaPagamento; 
+    private String observacao; // Observações do cliente
+    private Boolean precisaTroco;
+    private java.math.BigDecimal valorTroco;
+    private String origemPedido; // app, telefone, balcao
 }

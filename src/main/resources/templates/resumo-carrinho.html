@@ -20,7 +20,7 @@
     <div class="card shadow-sm mt-4">
         <div class="card-body">
             <div th:if="${carrinho.itens.isEmpty()}" class="alert alert-info text-center">
-                Seu carrinho está vazio. <a th:href="@{/cardapio}" class="alert-link">Comece a pedir!</a>
+                Seu carrinho está vazio. <a th:href="@{/cardapio/inicio}" class="alert-link">Comece a pedir!</a>
             </div>
 
             <table th:if="${!carrinho.itens.isEmpty()}" class="table align-middle">

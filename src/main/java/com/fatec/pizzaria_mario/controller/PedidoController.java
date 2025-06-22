@@ -23,7 +23,7 @@ public class PedidoController {
     private UsuarioRepository usuarioRepository;
 
     @PostMapping("/pedidos")
-    public String finalizarPedido(@ModelAttribute Usuario usuarioForm, @RequestParam("formaPagamento") String formaPagamento, @AuthenticationPrincipal Usuario usuarioLogado, HttpSession session) {
+    public String finalizarPedido(@ModelAttribute Usuario usuarioForm, @RequestParam("formaPagamento") String formaPagamento, @RequestParam(value = "observacao", required = false) String observacao, @RequestParam(value = "precisaTroco", required = false) String precisaTroco, @RequestParam(value = "valorTroco", required = false) String valorTroco, @AuthenticationPrincipal Usuario usuarioLogado, HttpSession session) {
         Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
         if (carrinho == null || carrinho.getItens().isEmpty()) { return "redirect:/cardapio"; }
 
@@ -41,6 +41,24 @@ public class PedidoController {
         pedido.setDataHora(LocalDateTime.now());
         pedido.setStatus(StatusPedido.PENDENTE);
         pedido.setFormaPagamento(formaPagamento);
+        pedido.setObservacao(observacao); // Salva observação
+        pedido.setPrecisaTroco("sim".equals(precisaTroco));
+        if (valorTroco != null && !valorTroco.isEmpty()) {
+            try {
+                pedido.setValorTroco(new java.math.BigDecimal(valorTroco.replace(",", ".")));
+            } catch (Exception e) {
+                pedido.setValorTroco(null);
+            }
+        } else {
+            pedido.setValorTroco(null);
+        }
+        String origemPedido = com.fatec.pizzaria_mario.controller.CarrinhoController.getOrigemPedidoFromSession(session);
+        if (origemPedido != null) {
+            pedido.setOrigemPedido(origemPedido);
+            session.removeAttribute("origemPedido");
+        } else {
+            pedido.setOrigemPedido("app");
+        } // Sempre app para pedidos do cliente
         pedidoRepository.save(pedido);
         session.removeAttribute("carrinho");
         

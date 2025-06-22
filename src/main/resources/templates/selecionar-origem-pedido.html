@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Origem do Pedido</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-body text-center">
+                    <h2 class="mb-4">Como o pedido foi feito?</h2>
+                    <form th:action="@{/atendente/definir-origem}" method="post">
+                        <div class="mb-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="origemPedido" id="balcao" value="balcao" required>
+                                <label class="form-check-label" for="balcao">Balcão</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="origemPedido" id="telefone" value="telefone" required>
+                                <label class="form-check-label" for="telefone">Telefone</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Continuar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

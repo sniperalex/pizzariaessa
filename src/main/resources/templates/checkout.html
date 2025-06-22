@@ -41,18 +41,22 @@
                     <div class="row g-3">
                         <div class="col-12">
                             <label for="nomeCompleto" class="form-label">Nome completo</label>
-                            <input type="text" class="form-control" id="nomeCompleto" th:field="*{nomeCompleto}" required>
+                            <input type="text" class="form-control" id="nomeCompleto" th:field="*{nomeCompleto}" th:placeholder="'Nome completo'" required>
                         </div>
                         <div class="col-12">
                             <label for="telefone" class="form-label">Telefone (com DDD)</label>
-                            <input type="tel" class="form-control" id="telefone" th:field="*{telefone}" required>
+                            <input type="tel" class="form-control" id="telefone" th:field="*{telefone}" th:placeholder="'(11) 99999-9999'" required>
                         </div>
                         <div class="col-12">
                             <label for="endereco" class="form-label">Endereço de Entrega</label>
-                            <input type="text" class="form-control" id="endereco" th:field="*{endereco}" required>
+                            <input type="text" class="form-control" id="endereco" th:field="*{endereco}" th:placeholder="'Rua, número, bairro'" required>
                         </div>
                     </div>
                     <hr class="my-4">
+                    <div class="mb-3">
+                        <label for="observacao" class="form-label">Observação para o pedido (opcional)</label>
+                        <textarea class="form-control" id="observacao" name="observacao" rows="2" placeholder="Ex: Sem cebola, troco para R$ 100, portão dos fundos, etc."></textarea>
+                    </div>
                     <h4 class="mb-3">Forma de Pagamento</h4>
                     <div class="my-3">
                         <div class="form-check"><input id="credito" name="formaPagamento" type="radio" class="form-check-input" value="credito" required checked><label class="form-check-label" for="credito">Cartão de Crédito</label></div>
@@ -60,6 +64,44 @@
                         <div class="form-check"><input id="pix" name="formaPagamento" type="radio" class="form-check-input" value="pix" required><label class="form-check-label" for="pix">PIX</label></div>
                         <div class="form-check"><input id="dinheiro" name="formaPagamento" type="radio" class="form-check-input" value="dinheiro" required><label class="form-check-label" for="dinheiro">Dinheiro</label></div>
                     </div>
+                    <div id="troco-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label for="precisaTroco" class="form-label">Precisa de troco?</label>
+                            <select class="form-select" id="precisaTroco" name="precisaTroco">
+                                <option value="nao">Não</option>
+                                <option value="sim">Sim</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="valorTrocoDiv" style="display:none;">
+                            <label for="valorTroco" class="form-label">Troco para quanto?</label>
+                            <input type="number" min="0" step="0.01" class="form-control" id="valorTroco" name="valorTroco" placeholder="Ex: 100.00">
+                        </div>
+                    </div>
+                    <script>
+                        const dinheiroRadio = document.getElementById('dinheiro');
+                        const trocoFields = document.getElementById('troco-fields');
+                        const precisaTroco = document.getElementById('precisaTroco');
+                        const valorTrocoDiv = document.getElementById('valorTrocoDiv');
+                        document.querySelectorAll('input[name="formaPagamento"]').forEach(radio => {
+                            radio.addEventListener('change', function() {
+                                if (dinheiroRadio.checked) {
+                                    trocoFields.style.display = 'block';
+                                } else {
+                                    trocoFields.style.display = 'none';
+                                    valorTrocoDiv.style.display = 'none';
+                                }
+                            });
+                        });
+                        if (precisaTroco) {
+                            precisaTroco.addEventListener('change', function() {
+                                if (precisaTroco.value === 'sim') {
+                                    valorTrocoDiv.style.display = 'block';
+                                } else {
+                                    valorTrocoDiv.style.display = 'none';
+                                }
+                            });
+                        }
+                    </script>
                     <hr class="my-4">
                     <button class="w-100 btn btn-primary btn-lg" type="submit">Confirmar e Finalizar Pedido</button>
                 </form>

@@ -258,4 +258,28 @@ public class AdminController {
         model.addAttribute("clienteFiltro", cliente);
         return "admin-pedidos";
     }
+
+    @GetMapping("/pedidos/{id}/imprimir")
+    public String imprimirPedido(@PathVariable String id, Model model) {
+        var pedidoOpt = pedidoRepository.findById(id);
+        if (pedidoOpt.isPresent()) {
+            Pedido pedido = pedidoOpt.get();
+            // Garante que todos os campos usados no template não sejam nulos
+            if (pedido.getId() == null) pedido.setId("");
+            if (pedido.getDataHora() == null) pedido.setDataHora(java.time.LocalDateTime.now());
+            if (pedido.getNomeCliente() == null) pedido.setNomeCliente("");
+            if (pedido.getEnderecoEntrega() == null) pedido.setEnderecoEntrega("");
+            if (pedido.getItens() == null) pedido.setItens(java.util.Collections.emptyList());
+            if (pedido.getTotal() == null) pedido.setTotal(java.math.BigDecimal.ZERO);
+            if (pedido.getFormaPagamento() == null) pedido.setFormaPagamento("");
+            if (pedido.getObservacao() == null) pedido.setObservacao("");
+            if (pedido.getPrecisaTroco() == null) pedido.setPrecisaTroco(Boolean.FALSE);
+            if (pedido.getValorTroco() == null) pedido.setValorTroco(java.math.BigDecimal.ZERO);
+            model.addAttribute("pedido", pedido);
+            return "admin-pedido-imprimir";
+        } else {
+            model.addAttribute("mensagemErro", "Pedido não encontrado.");
+            return "error/generic-error";
+        }
+    }
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Impressão do Pedido</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .pedido-box { border: 1px solid #ccc; padding: 24px; border-radius: 8px; max-width: 500px; margin: auto; }
+        h2 { margin-top: 0; }
+        .itens { margin-bottom: 16px; }
+        .obs { color: #555; font-size: 0.95em; margin-top: 10px; }
+        .total { font-weight: bold; font-size: 1.2em; }
+        .print-btn { display: none; }
+        @media print { .print-btn { display: none; } }
+    </style>
+</head>
+<body>
+<div class="pedido-box">
+    <h2>Pedido #<span th:text="${#strings.substring(pedido.id, 0, 8)}"></span></h2>
+    <p><strong>Data/Hora:</strong> <span th:text="${#temporals.format(pedido.dataHora, 'dd/MM/yy HH:mm')}"></span></p>
+    <p><strong>Cliente:</strong> <span th:text="${pedido.nomeCliente}"></span></p>
+    <p><strong>Endereço:</strong> <span th:text="${pedido.enderecoEntrega}"></span></p>
+    <div class="itens">
+        <strong>Itens:</strong>
+        <ul>
+            <li th:each="item : ${pedido.itens}" th:text="${item.quantidade} + 'x ' + (item.produto != null ? item.produto.nome : 'Produto removido')"></li>
+        </ul>
+    </div>
+    <div th:if="${pedido.observacao}" class="obs">
+        <strong>Observação:</strong> <span th:text="${pedido.observacao}"></span>
+    </div>
+    <p class="total">Total: <span th:text="|R$ ${{ #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT') }}|"></span></p>
+    <p><strong>Pagamento:</strong> <span th:text="${pedido.formaPagamento}"></span></p>
+    <div th:if="${pedido.formaPagamento == 'dinheiro'}" class="obs">
+        <span th:if="${pedido.precisaTroco}"><strong>Troco para:</strong> <span th:text="${pedido.valorTroco}"></span></span>
+        <span th:if="${!pedido.precisaTroco}"><strong>Sem troco</strong></span>
+    </div>
+    <button class="print-btn btn btn-primary w-100 mt-3" onclick="window.print()">Imprimir</button>
+</div>
+<script>
+    // Só imprime automaticamente se não for navegação direta
+    if (window.location.hash === '#auto') {
+        window.print();
+    }
+</script>
+</body>
+</html>

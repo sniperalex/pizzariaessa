@@ -1,9 +1,14 @@
 package com.fatec.pizzaria_mario.controller;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.fatec.pizzaria_mario.domain.Usuario;
 
 @Controller
 public class HomeController {
@@ -24,4 +29,11 @@ public class HomeController {
         }
         return "redirect:/cardapio/inicio";
     }
+
+    @GetMapping("/pizzaria")
+    public String pizzariaInfo() {
+        return "pizzaria-info";
+    }
+
+    // Removido método inicioPedido(HttpSession, Usuario) para evitar conflito de mapping
 }
