@@ -54,9 +54,18 @@ public class PedidoController {
     }
 
     @GetMapping("/meus-pedidos")
-    public String meusPedidos(@AuthenticationPrincipal Usuario usuarioLogado, Model model) {
-        List<Pedido> pedidos = pedidoRepository.findByUsuarioIdOrderByDataHoraDesc(usuarioLogado.getId());
-        model.addAttribute("pedidos", pedidos);
+    public String meusPedidos(@AuthenticationPrincipal Usuario usuarioLogado, Model model, RedirectAttributes redirectAttributes) {
+        if (usuarioLogado == null || usuarioLogado.getId() == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Usuário inválido. Faça login novamente.");
+            return "redirect:/login";
+        }
+        try {
+            List<Pedido> pedidos = pedidoRepository.findByUsuarioIdOrderByDataHoraDesc(usuarioLogado.getId());
+            model.addAttribute("pedidos", pedidos != null ? pedidos : java.util.Collections.emptyList());
+        } catch (Exception e) {
+            model.addAttribute("pedidos", java.util.Collections.emptyList());
+            model.addAttribute("errorMessage", "Erro ao buscar pedidos: " + e.getMessage());
+        }
         return "meus-pedidos";
     }
 

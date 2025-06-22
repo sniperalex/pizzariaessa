@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Escolha 2 Sabores</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .pizza-card { cursor: pointer; transition: box-shadow 0.2s, border 0.2s; }
+        .pizza-card.selected { border: 3px solid #4dd2ff; box-shadow: 0 0 0 4px #b3f0ff; }
+        .pizza-card.selected-second { border: 3px solid #4dff88; box-shadow: 0 0 0 4px #b3ffd1; }
+        .pizza-card.disabled { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div class="container py-3">
+</div>
+<div class="container py-5">
+    <div class="alert alert-info text-center mb-4" role="alert">
+        <h4 class="mb-1">Escolha 2 Sabores de Pizza</h4>
+        Monte sua pizza meio a meio escolhendo dois sabores.<br>
+        <strong>O valor será o do sabor mais caro escolhido.</strong>
+    </div>
+    <form id="meioMeioForm" method="POST" th:action="@{/cardapio/meio-a-meio/selecionar}">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div class="col" th:each="pizza : ${pizzas}">
+                <div class="card h-100 pizza-card" th:attr="data-id=${pizza.id}" onclick="selecionarSabor(this)">
+                    <img th:src="@{/api/produtos/{id}/imagem(id=${pizza.id})}" class="card-img-top" alt="Imagem" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${pizza.nome}"></h5>
+                        <p class="card-text" th:text="${pizza.descricao}"></p>
+                        <h4 class="text-end text-success" th:text="|R$ ${{ #numbers.formatDecimal(pizza.preco, 1, 'COMMA', 2, 'POINT') }}|"></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="sabor1" id="sabor1">
+        <input type="hidden" name="sabor2" id="sabor2">
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success btn-lg" id="btnAvancar" disabled>Adicionar ao Carrinho</button>
+        </div>
+    </form>
+    <div class="text-center mt-4">
+        <a href="/cardapio/inicio" class="btn btn-outline-light btn-lg shadow" style="background: #343a40; border-color: #fff; color: #fff;"><i class="bi bi-arrow-left"></i> Voltar</a>
+    </div>
+</div>
+<div th:replace="~{fragments :: carrinho-flutuante}"></div>
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script>
+    let selecionados = [];
+    function selecionarSabor(card) {
+        const id = card.getAttribute('data-id');
+        if (selecionados.includes(id)) {
+            selecionados = selecionados.filter(s => s !== id);
+            card.classList.remove('selected', 'selected-second');
+        } else if (selecionados.length < 2) {
+            selecionados.push(id);
+            if (selecionados.length === 1) {
+                card.classList.add('selected');
+            } else {
+                card.classList.add('selected-second');
+            }
+        }
+        // Atualiza seleção visual
+        document.querySelectorAll('.pizza-card').forEach(c => {
+            const cid = c.getAttribute('data-id');
+            if (!selecionados.includes(cid)) {
+                c.classList.remove('selected', 'selected-second');
+            }
+        });
+        // Habilita botão se dois sabores
+        document.getElementById('btnAvancar').disabled = selecionados.length !== 2;
+        document.getElementById('sabor1').value = selecionados[0] || '';
+        document.getElementById('sabor2').value = selecionados[1] || '';
+    }
+</script>
+</body>
+</html>

@@ -43,7 +43,7 @@ public class AdminController {
     @Autowired private PasswordEncoder passwordEncoder;
 
     // ==========================================================
-    // MÉTODO DO DASHBOARD (RESTAURADO)
+    // MÉTODO DO DASHBOARD
     // ==========================================================
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
@@ -61,7 +61,9 @@ public class AdminController {
         return "admin-dashboard";
     }
 
-    // --- GERENCIAMENTO DE PRODUTOS ---
+    // ==========================================================
+    // --- GERENCIAMENTO DE PRODUTOS (COM IDs CORRIGIDOS PARA STRING) ---
+    // ==========================================================
     @GetMapping("/produtos")
     public String gerenciarProdutos(Model model) {
         if (!model.containsAttribute("produtoDto")) {
@@ -100,7 +102,80 @@ public class AdminController {
         return "redirect:/admin/produtos";
     }
 
-    // --- GERENCIAMENTO DE USUÁRIOS ---
+    // <<< CORREÇÃO AQUI: ID alterado de Long para String >>>
+    @GetMapping("/produtos/editar/{id}")
+    public String exibirFormularioEdicaoProduto(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Produto> produtoOptional = produtoRepository.findById(id);
+        if (produtoOptional.isPresent()) {
+            Produto produto = produtoOptional.get();
+            ProdutoDTO produtoDto = new ProdutoDTO();
+            produtoDto.setId(produto.getId());
+            produtoDto.setNome(produto.getNome());
+            produtoDto.setDescricao(produto.getDescricao());
+            produtoDto.setPreco(produto.getPreco());
+            produtoDto.setCategoria(produto.getCategoria());
+            
+            model.addAttribute("produtoDto", produtoDto);
+            
+            return "admin-produto-editar"; 
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Produto não encontrado!");
+            return "redirect:/admin/produtos";
+        }
+    }
+
+    // <<< CORREÇÃO AQUI: ID alterado de Long para String >>>
+    @PostMapping("/produtos/editar/{id}")
+    public String processarEdicaoProduto(
+            @PathVariable String id, 
+            @Valid @ModelAttribute("produtoDto") ProdutoDTO produtoDto, 
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) throws IOException {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.produtoDto", bindingResult);
+            redirectAttributes.addFlashAttribute("produtoDto", produtoDto);
+            return "redirect:/admin/produtos/editar/" + id;
+        }
+
+        Optional<Produto> produtoExistenteOpt = produtoRepository.findById(id);
+        if (produtoExistenteOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro: Produto não encontrado para atualizar.");
+            return "redirect:/admin/produtos";
+        }
+
+        Produto produtoExistente = produtoExistenteOpt.get();
+        produtoExistente.setNome(produtoDto.getNome());
+        produtoExistente.setDescricao(produtoDto.getDescricao());
+        produtoExistente.setPreco(produtoDto.getPreco());
+        produtoExistente.setCategoria(produtoDto.getCategoria());
+        
+        MultipartFile imagemFile = produtoDto.getImagemFile();
+        if (imagemFile != null && !imagemFile.isEmpty()) {
+            produtoExistente.setImagem(imagemFile.getBytes());
+            produtoExistente.setImagemTipo(imagemFile.getContentType());
+        }
+
+        produtoRepository.save(produtoExistente);
+        redirectAttributes.addFlashAttribute("successMessage", "Produto '" + produtoExistente.getNome() + "' atualizado com sucesso!");
+        return "redirect:/admin/produtos";
+    }
+
+    // <<< CORREÇÃO AQUI: ID alterado de Long para String >>>
+    @PostMapping("/produtos/remover/{id}")
+    public String removerProduto(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        if (!produtoRepository.existsById(id)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro: Produto não encontrado para remover.");
+        } else {
+            produtoRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Produto removido com sucesso!");
+        }
+        return "redirect:/admin/produtos";
+    }
+
+    // ==========================================================
+    // --- GERENCIAMENTO DE USUÁRIOS (JÁ ESTAVA CORRETO COM STRING) ---
+    // ==========================================================
     @GetMapping("/usuarios")
     public String listarUsuarios(Model model) {
         model.addAttribute("usuarios", usuarioRepository.findAll());
@@ -151,7 +226,9 @@ public class AdminController {
         return "redirect:/admin/usuarios";
     }
     
+    // ==========================================================
     // --- GERENCIAMENTO DE PEDIDOS ---
+    // ==========================================================
     @GetMapping("/pedidos")
     public String listarTodosPedidos(Model model, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @RequestParam(required = false) String status, @RequestParam(required = false) String cliente) {
         List<Pedido> pedidos;

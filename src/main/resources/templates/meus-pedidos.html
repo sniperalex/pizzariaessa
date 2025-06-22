@@ -33,8 +33,13 @@
                     <h5>Itens do Pedido</h5>
                     <ul class="list-group list-group-flush">
                         <li th:each="item : ${pedido.itens}" class="list-group-item ps-0">
-                            <span th:text="${item.quantidade} + 'x '"></span>
-                            <span th:text="${item.produto.nome}"></span>
+                            <span th:if="${item.produto} != null">
+                                <span th:text="${item.quantidade} + 'x '"></span>
+                                <span th:text="${item.produto.nome}"></span>
+                            </span>
+                            <span th:if="${item.produto} == null" class="text-danger">
+                                Produto removido do sistema
+                            </span>
                         </li>
                     </ul>
                 </div>

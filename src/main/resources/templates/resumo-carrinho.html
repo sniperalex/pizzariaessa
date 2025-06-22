@@ -36,7 +36,13 @@
                     <tr th:each="item : ${carrinho.itens}">
                         <td>
                             <div class="d-flex align-items-center">
-                                <img th:src="@{/api/produtos/{id}/imagem(id=${item.produto.id})}" alt="Imagem" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
+                                <span th:if="${item.produto.categoria == 'Pizza Meio a Meio'}">
+                                    <img th:src="@{/api/produtos/{id}/imagem(id=${#strings.arraySplit(item.produto.id, '-')[0]})}" alt="Imagem 1" style="width: 30px; height: 60px; object-fit: cover; border-radius: 8px 0 0 8px; margin-right: 2px;">
+                                    <img th:src="@{/api/produtos/{id}/imagem(id=${#strings.arraySplit(item.produto.id, '-')[1]})}" alt="Imagem 2" style="width: 30px; height: 60px; object-fit: cover; border-radius: 0 8px 8px 0; margin-right: 15px;">
+                                </span>
+                                <span th:if="${item.produto.categoria != 'Pizza Meio a Meio'}">
+                                    <img th:src="@{/api/produtos/{id}/imagem(id=${item.produto.id})}" alt="Imagem" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
+                                </span>
                                 <div>
                                     <h6 class="mb-0" th:text="${item.produto.nome}"></h6>
                                     <small class="text-muted" th:text="${item.produto.categoria}"></small>

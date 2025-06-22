@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Escolha sua Pizza</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .pizza-svg {
+            display: block;
+            margin: 0 auto 1rem auto;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div class="container py-3">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header text-center">
+                        <h3>Escolha sua Pizza</h3>
+                    </div>
+                    <div class="card-body">
+                        <svg class="pizza-svg" width="120" height="120" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="55" fill="#ffe5b4" stroke="#d4a15a" stroke-width="5" />
+                            <text x="60" y="65" text-anchor="middle" font-size="18" fill="#d4a15a">1 Sabor</text>
+                        </svg>
+                        <form method="POST" th:action="@{/cardapio/um-sabor/selecionar}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="list-group">
+                                        <div th:each="pizza : ${pizzas}" class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong th:text="${pizza.nome}"></strong>
+                                                <span class="text-muted ms-2" th:text="${pizza.descricao}"></span>
+                                            </div>
+                                            <div>
+                                                <span class="badge bg-success me-3" th:text="|R$ ${{#numbers.formatDecimal(pizza.preco, 1, 'COMMA', 2, 'POINT')}}|"></span>
+                                                <button type="submit" name="pizzaId" th:value="${pizza.id}" class="btn btn-primary btn-sm">Selecionar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="text-center mt-4">
+                            <a href="/cardapio/inicio" class="btn btn-outline-light btn-lg shadow" style="background: #343a40; border-color: #fff; color: #fff;"><i class="bi bi-arrow-left"></i> Voltar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments :: carrinho-flutuante}"></div>
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

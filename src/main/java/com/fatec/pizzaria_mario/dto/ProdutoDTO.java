@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 
 @Data
 public class ProdutoDTO {
+    // Adicionado campo id para edição
+    private String id;
 
     @NotBlank(message = "O nome do produto não pode ser vazio.")
     @Size(min = 3, max = 50, message = "O nome deve ter entre 3 e 50 caracteres.")

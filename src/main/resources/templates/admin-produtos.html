@@ -55,6 +55,7 @@
     </div>
     
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
     <div class="card shadow-sm">
          <div class="card-header"><h3>Produtos Cadastrados</h3></div>
@@ -78,7 +79,7 @@
                             <td th:text="${produto.categoria}"></td>
                             <td class="text-end">
                                 <a th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-fill"></i></a>
-                                <form th:action="@{/admin/produtos/{id}/remover(id=${produto.id})}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este produto?');">
+                                <form th:action="@{/admin/produtos/remover/{id}(id=${produto.id})}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este produto?');">
                                     <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></button>
                                 </form>
                             </td>

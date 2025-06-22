@@ -4,52 +4,65 @@
     <meta charset="UTF-8">
     <title>Admin - Editar Produto</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body class="bg-light">
 
-<div class="container py-5">
-    <a th:href="@{/admin/produtos}" class="btn btn-secondary mb-4">Voltar para a Lista</a>
+<div th:replace="~{fragments :: navbar}"></div>
 
+<div class="container py-5">
     <div class="card shadow-sm">
         <div class="card-header">
-            <h3>Editar Produto: <span th:text="${produto.nome}">Nome do Produto</span></h3>
+            <h3 th:text="|Editando Produto: ${produtoDto.nome}|">Editar Produto</h3>
         </div>
         <div class="card-body">
-            <!-- O 'action' aponta para a rota de edição e passa o ID do produto -->
-            <form method="POST" th:action="@{/admin/produtos/editar/{id}(id=${produto.id})}" th:object="${produto}" enctype="multipart/form-data">
+            <form method="POST" th:action="@{/admin/produtos/editar/{id}(id=${produtoDto.id})}" th:object="${produtoDto}" enctype="multipart/form-data">
+                
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome do Produto</label>
-                    <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+                    <input type="text" class="form-control" th:field="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
                 </div>
                 <div class="mb-3">
                     <label for="descricao" class="form-label">Descrição</label>
-                    <textarea class="form-control" id="descricao" th:field="*{descricao}" rows="3" required></textarea>
+                    <textarea class="form-control" th:field="*{descricao}" rows="3" th:classappend="${#fields.hasErrors('descricao')} ? 'is-invalid' : ''"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="preco" class="form-label">Preço</label>
-                        <input type="number" step="0.01" class="form-control" id="preco" th:field="*{preco}" required>
+                        <input type="number" step="0.01" class="form-control" th:field="*{preco}" th:classappend="${#fields.hasErrors('preco')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}"></div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="categoria" class="form-label">Categoria</label>
-                        <select class="form-select" id="categoria" th:field="*{categoria}" required>
+                        <select class="form-select" th:field="*{categoria}" th:classappend="${#fields.hasErrors('categoria')} ? 'is-invalid' : ''">
                             <option value="Pizza">Pizza</option>
                             <option value="Acompanhamento">Acompanhamento</option>
                             <option value="Bebida">Bebida</option>
                         </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></div>
                     </div>
                 </div>
+                
                 <div class="mb-3">
+                    <label class="form-label">Imagem Atual</label>
+                    <div>
+                         <img th:src="@{/api/produtos/{id}/imagem(id=${produtoDto.id})}" alt="Imagem Atual" class="img-fluid rounded mb-2" style="max-width: 200px;"/>
+                    </div>
                     <label for="imagemFile" class="form-label">Trocar Imagem (opcional)</label>
-                    <input class="form-control" type="file" id="imagemFile" name="imagemFile" accept="image/png, image/jpeg">
+                    <input class="form-control" type="file" th:field="*{imagemFile}" accept="image/png, image/jpeg">
                     <div class="form-text">Selecione uma nova imagem apenas se quiser substituí-la.</div>
                 </div>
+                
                 <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                <a th:href="@{/admin/produtos}" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
     </div>
 </div>
 
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
