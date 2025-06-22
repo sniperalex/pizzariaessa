@@ -16,11 +16,13 @@
                     <form th:action="@{/atendente/definir-origem}" method="post">
                         <div class="mb-4">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="origemPedido" id="balcao" value="balcao" required>
+                                <input class="form-check-input" type="radio" name="origemPedido" id="balcao" value="balcao" required
+                                    th:checked="${origemSelecionada == 'balcao'}">
                                 <label class="form-check-label" for="balcao">Balcão</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="origemPedido" id="telefone" value="telefone" required>
+                                <input class="form-check-input" type="radio" name="origemPedido" id="telefone" value="telefone" required
+                                    th:checked="${origemSelecionada == 'telefone'}">
                                 <label class="form-check-label" for="telefone">Telefone</label>
                             </div>
                         </div>

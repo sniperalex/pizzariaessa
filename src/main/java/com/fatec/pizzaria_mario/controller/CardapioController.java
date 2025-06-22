@@ -1,7 +1,6 @@
 package com.fatec.pizzaria_mario.controller;
 
 import com.fatec.pizzaria_mario.domain.Carrinho;
-import com.fatec.pizzaria_mario.domain.ItemPedido;
 import com.fatec.pizzaria_mario.domain.Produto;
 import com.fatec.pizzaria_mario.domain.Usuario;
 import com.fatec.pizzaria_mario.repository.ProdutoRepository;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,5 +107,16 @@ public class CardapioController {
         // Aqui você pode adicionar a pizza ao carrinho ou salvar na sessão
         // Por enquanto, apenas redireciona para acompanhamentos
         return "redirect:/acompanhamentos";
+    }
+
+    // NOVO: Tela inicial para escolha de tipo de pizza - Atendente
+    @GetMapping("/atendente/cardapio/inicio")
+    public String escolherTipoPizzaAtendente(HttpSession session) {
+        // Só exibe a tela se origem já foi definida
+        Object origem = session.getAttribute("origemPedido");
+        if (origem == null) {
+            return "redirect:/atendente/novo-pedido";
+        }
+        return "atendente-escolher-sabor";
     }
 }

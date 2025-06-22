@@ -28,6 +28,9 @@
                     <h4>Sobre nós</h4>
                     <p>Tradição, qualidade e aquele sabor especial que só a Pizzaria do Mario tem! Venha nos visitar ou peça pelo app. Temos delivery rápido e atendimento de primeira.</p>
                     <div class="text-center mt-4">
+                        <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/dashboard}" class="btn btn-primary mb-2">Voltar para o Painel Admin</a>
+                        <a th:if="${#authorization.expression('hasRole(''ATENDENTE'')')}" th:href="@{/atendente/home}" class="btn btn-primary mb-2">Voltar para o Painel Atendente</a>
+                        <a th:if="${#authorization.expression('hasRole(''CLIENTE'')')}" th:href="@{/cardapio/inicio}" class="btn btn-primary mb-2">Voltar para o Início</a>
                         <img th:src="@{/images/logo_pizzaria2.png}" alt="Foto da pizzaria" class="img-fluid rounded shadow" style="max-width: 300px;">
                     </div>
                 </div>

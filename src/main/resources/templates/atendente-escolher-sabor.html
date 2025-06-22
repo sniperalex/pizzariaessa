@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Como será sua pizza hoje? (Atendente)</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .pizza-card {
+            transition: box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .pizza-card:hover {
+            box-shadow: 0 0 0 4px #ffe5b4;
+        }
+        .pizza-svg {
+            display: block;
+            margin: 0 auto 1rem auto;
+        }
+        .pizza-title-buffer {
+            background: rgba(255,255,255,0.85);
+            display: inline-block;
+            padding: 0.5rem 2rem;
+            border-radius: 1rem;
+        }
+        .btn-voltar-origem {
+            background: rgba(255,255,255,0.95) !important;
+            color: #333 !important;
+            border: 2px solid #d4a15a !important;
+            font-weight: bold;
+        }
+        .btn-voltar-origem:hover {
+            background: #ffe5b4 !important;
+            color: #222 !important;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div class="container py-5">
+    <h1 class="text-center mb-5"><span class="pizza-title-buffer">Como será sua pizza hoje?</span></h1>
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <a href="/cardapio/um-sabor" style="text-decoration:none; color:inherit;">
+                <div class="card pizza-card text-center shadow-sm p-4">
+                    <svg class="pizza-svg" width="80" height="80" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="55" fill="#ff4d4d" stroke="#d4a15a" stroke-width="5" />
+                        <circle cx="60" cy="60" r="25" fill="#d4a15a" opacity="0.2" />
+                    </svg>
+                    <h3>1 Sabor</h3>
+                    <p class="text-muted">A clássica! Escolha seu sabor favorito.</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="/cardapio/meio-a-meio" style="text-decoration:none; color:inherit;">
+                <div class="card pizza-card text-center shadow-sm p-4">
+                    <svg class="pizza-svg" width="80" height="80" viewBox="0 0 120 120">
+                        <defs>
+                            <linearGradient id="meioMeioPizza" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse">
+                                <stop offset="50%" stop-color="#4dff88" />
+                                <stop offset="50%" stop-color="#4dd2ff" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="60" cy="60" r="55" fill="url(#meioMeioPizza)" stroke="#d4a15a" stroke-width="5" />
+                        <line x1="60" y1="5" x2="60" y2="115" stroke="#d4a15a" stroke-width="5"/>
+                        <circle cx="60" cy="60" r="25" fill="#d4a15a" opacity="0.2" />
+                    </svg>
+                    <h3>Meio a Meio</h3>
+                    <p class="text-muted">Combine dois sabores e crie sua pizza perfeita.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <a href="/atendente/novo-pedido" class="btn btn-voltar-origem w-100 mb-2">
+                <i class="bi bi-arrow-left"></i> Voltar e escolher outra origem
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
