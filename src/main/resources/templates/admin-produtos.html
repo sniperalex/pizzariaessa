@@ -73,7 +73,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="produto : ${produtos}">
-                            <td><img th:src="@{/api/produtos/{id}/imagem(id=${produto.id})}" alt="Imagem" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;"/></td>
+                            <td><img th:src="@{/produtos/{id}/imagem(id=${produto.id})}" alt="Imagem" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;"/></td>
                             <td th:text="${produto.nome}"></td>
                             <td th:text="|R$ ${{ #numbers.formatDecimal(produto.preco, 1, 'COMMA', 2, 'POINT') }}|"></td>
                             <td th:text="${produto.categoria}"></td>

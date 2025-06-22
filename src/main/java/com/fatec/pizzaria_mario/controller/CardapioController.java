@@ -90,8 +90,8 @@ public class CardapioController {
     @GetMapping("/cardapio/um-sabor")
     public String selecionarPizzaUmSabor(Model model) {
         List<Produto> pizzas = produtoRepository.findByCategoria("Pizza");
-        model.addAttribute("produtos", pizzas);
-        return "cardapio";
+        model.addAttribute("pizzas", pizzas);
+        return "selecionar-pizza-um-sabor";
     }
 
     // NOVO: Processa seleção de pizza de 1 sabor

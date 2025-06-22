@@ -22,7 +22,7 @@
         <div class="col" th:each="produto : ${produtos}">
             <div class="card h-100 shadow-sm">
                 <!-- AQUI ESTÁ A CORREÇÃO -->
-                <img th:src="@{/api/produtos/{id}/imagem(id=${produto.id})}" class="card-img-top" alt="Imagem" style="height: 200px; object-fit: cover;">
+                <img th:src="@{/produtos/{id}/imagem(id=${produto.id})}" class="card-img-top" alt="Imagem" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${produto.nome}"></h5>
                     <p class="card-text" th:text="${produto.descricao}"></p>
@@ -37,11 +37,9 @@
             </div>
         </div>
     </div>
-    <div class="text-center mt-5">
-        <a th:href="@{/bebidas}" class="btn btn-success btn-lg">Avançar para Bebidas</a>
-    </div>
-    <div class="text-center mt-4">
+    <div class="text-center mt-5 d-flex justify-content-between">
         <a href="/cardapio/inicio" class="btn btn-outline-light btn-lg shadow" style="background: #343a40; border-color: #fff; color: #fff;"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <a href="/bebidas" class="btn btn-success btn-lg">Avançar para Bebidas →</a>
     </div>
 </div>
 <div th:replace="~{fragments :: carrinho-flutuante}"></div>

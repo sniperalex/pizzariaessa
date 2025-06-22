@@ -49,7 +49,7 @@
                 <div class="mb-3">
                     <label class="form-label">Imagem Atual</label>
                     <div>
-                         <img th:src="@{/api/produtos/{id}/imagem(id=${produtoDto.id})}" alt="Imagem Atual" class="img-fluid rounded mb-2" style="max-width: 200px;"/>
+                         <img th:src="@{/produtos/{id}/imagem(id=${produtoDto.id})}" alt="Imagem Atual" class="img-fluid rounded mb-2" style="max-width: 200px;"/>
                     </div>
                     <label for="imagemFile" class="form-label">Trocar Imagem (opcional)</label>
                     <input class="form-control" type="file" th:field="*{imagemFile}" accept="image/png, image/jpeg">

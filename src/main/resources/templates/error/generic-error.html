@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Erro</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container py-5 text-center">
+    <h1 class="display-4 text-danger">Ocorreu um erro</h1>
+    <p th:text="${errorMessage}">Erro inesperado.</p>
+    <a href="/" class="btn btn-primary mt-4">Voltar para o início</a>
+</div>
+</body>
+</html>

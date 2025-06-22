@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-// MUDANÇA CRÍTICA: Prefixo /api para evitar qualquer conflito com a UI.
-@RequestMapping("/api/produtos")
+// MUDANÇA CRÍTICA: Prefixo /produtos para evitar conflito com a API REST.
+@RequestMapping("/produtos")
 public class ProdutoController {
 
     @Autowired

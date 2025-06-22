@@ -14,7 +14,8 @@
         <hr class="my-4">
         <p>Acompanhe o status do seu pedido na sua área de cliente.</p>
         <!-- BOTÃO ATUALIZADO para ir para a página "Meus Pedidos" -->
-        <a class="btn btn-primary btn-lg mt-3" th:href="@{/meus-pedidos}" role="button">Ver Meus Pedidos</a>
+        <a th:if="${#authorization.expression('hasRole(''ATENDENTE'')')}" class="btn btn-primary btn-lg mt-3" th:href="@{/admin/pedidos}" role="button">Ver Todos os Pedidos</a>
+        <a th:if="${!#authorization.expression('hasRole(''ATENDENTE'')')}" class="btn btn-primary btn-lg mt-3" th:href="@{/meus-pedidos}" role="button">Ver Meus Pedidos</a>
     </div>
 </div>
 </body>

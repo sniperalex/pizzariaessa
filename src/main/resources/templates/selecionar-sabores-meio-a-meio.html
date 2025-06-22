@@ -27,7 +27,7 @@
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <div class="col" th:each="pizza : ${pizzas}">
                 <div class="card h-100 pizza-card" th:attr="data-id=${pizza.id}" onclick="selecionarSabor(this)">
-                    <img th:src="@{/api/produtos/{id}/imagem(id=${pizza.id})}" class="card-img-top" alt="Imagem" style="height: 200px; object-fit: cover;">
+                    <img th:src="@{/produtos/{id}/imagem(id=${pizza.id})}" class="card-img-top" alt="Imagem" style="height: 200px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title" th:text="${pizza.nome}"></h5>
                         <p class="card-text" th:text="${pizza.descricao}"></p>
@@ -42,8 +42,9 @@
             <button type="submit" class="btn btn-success btn-lg" id="btnAvancar" disabled>Adicionar ao Carrinho</button>
         </div>
     </form>
-    <div class="text-center mt-4">
+    <div class="text-center mt-5 d-flex justify-content-between">
         <a href="/cardapio/inicio" class="btn btn-outline-light btn-lg shadow" style="background: #343a40; border-color: #fff; color: #fff;"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <a href="/acompanhamentos" class="btn btn-success btn-lg">Avançar para Acompanhamentos →</a>
     </div>
 </div>
 <div th:replace="~{fragments :: carrinho-flutuante}"></div>
