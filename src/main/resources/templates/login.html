@@ -16,7 +16,7 @@
     <form th:action="@{/login}" method="post">
         <div th:if="${param.error}" class="alert alert-danger" role="alert">Usuário ou senha inválidos.</div>
         <div th:if="${param.logout}" class="alert alert-success" role="alert">Você saiu do sistema.</div>
-        <div th:if="${param.success}" class="alert alert-success" role="alert">Cadastro realizado com sucesso! Faça o login.</div>
+        <div th:if="${registerSuccessMessage}" class="alert alert-success" th:text="${registerSuccessMessage}"></div>
         <!-- MENSAGEM NOVA -->
         <div th:if="${resetSuccessMessage}" class="alert alert-success" th:text="${resetSuccessMessage}"></div>
         <div class="form-floating mb-3"><input type="text" id="username" name="username" class="form-control" placeholder="Usuário" required autofocus><label for="username">Usuário</label></div>

@@ -27,12 +27,13 @@ public class RegisterController {
 
     // ATUALIZADO para receber o e-mail
     @PostMapping("/register")
-    public String registerUser(Usuario usuario, @RequestParam("email") String email) {
+    public String registerUser(Usuario usuario, @RequestParam("email") String email, RedirectAttributes redirectAttributes) {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         usuario.setEmail(email);
         usuario.addRole("CLIENTE"); 
         usuarioRepository.save(usuario);
-        return "redirect:/login?success";
+        redirectAttributes.addFlashAttribute("registerSuccessMessage", "Cadastro realizado com sucesso! Faça o login.");
+        return "redirect:/login";
     }
 
     // Lógica do "Esqueci a Senha"
